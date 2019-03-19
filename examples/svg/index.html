@@ -6,21 +6,6 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="../../dist/bundle.js"></script>
-    <script>
-        const element = document.getElementById('graph');
-        const myGraph = graph.createSVGGraph(element);
-        const create1toNarray = n => Array.from({ length: n }).map((item, index) => index + 1);
-        const createRandomArray = n => Array.from({ length: n }).map(item => Math.random());
-        const x1 = create1toNarray(100);
-        const y1 = createRandomArray(100);
-        const x2 = create1toNarray(50);
-        const y2 = createRandomArray(50);
-        myGraph.setData([
-            { name: '#1', color: '#00ff00', values: { x: x1, y: y1 } },
-            { name: '#2', color: '#00ff00', values: { x: x2, y: y2 } },
-        ]);
-        myGraph.refresh();
-    </script>
 </head>
 <style>
     * {
@@ -43,8 +28,30 @@
         width: 500px;
         height: 500px;
     }
+
 </style>
 <body>
     <div id="graph"></div>
+    <script>
+            const element = document.getElementById('graph');
+            const myGraph = graph.createSVGGraph(element);
+            const create1toNarray = n => Array.from({ length: n }).map((item, index) => index + 1);
+            const createRandomArray = n => Array.from({ length: n }).map(item => Math.random());
+            const x1 = create1toNarray(100);
+            const y1 = createRandomArray(100);
+            const x2 = create1toNarray(50);
+            const y2 = createRandomArray(50);
+            myGraph.setData([
+                { name: '#0', color: '#ff0000', values: { x: [0, 0.25, 0.5, 0.75, 1], y: [0.5, 1, 0.75, 0, 0.25] } },
+                { name: '#1', color: '#00ff00', values: { x: x1, y: y1 } },
+                { name: '#2', color: '#0000ff', values: { x: x2, y: y2 } },
+            ]);
+            myGraph.setScale({ minX: 0, maxX: 100, minY: 0, maxY: 1 });
+            const start = Date.now();
+            for (let i = 0; i < 10000; i++) {
+              myGraph.refresh();
+            }
+            console.log(Date.now() - start);
+        </script>
 </body>
 </html>
