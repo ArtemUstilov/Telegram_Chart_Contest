@@ -6,8 +6,28 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="../../dist/bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="canvas.css">
 </head>
 <body>
-    <canvas id="canvas" width="500" height="500"></canvas>
+<canvas id="canvas" width="500" height="500"></canvas>
+<script>
+  let element = document.getElementById('canvas');
+  const graphr = graph.createCanvasGraph(element);
+  console.log(graphr);
+  const data = [
+    { name: 'BlaBla', color: '#FF0000', values: { x: [1, 2, 3, 4, 5, 6], y: [1, 6, 3,2, 5, 2] } },
+    { name: 'HaHa', color: '#00FF00', values: { x: [1, 2, 3, 4, 5, 6], y: [3, 1, 2, 5, 5,3] } },
+  ];
+
+  const scale = { minX: 1, maxX: 6, minY: 1, maxY: 6 };
+  const scale2 = { minX: 3, maxX: 6, minY: 1, maxY: 6 };
+  graphr.setData(data);
+  graphr.setScale(scale);
+  graphr.refresh();
+  setTimeout(()=>{
+    graphr.setScale(scale2);
+    graphr.refresh();
+  }, 1000);
+</script>
 </body>
 </html>
