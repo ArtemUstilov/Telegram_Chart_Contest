@@ -11,6 +11,21 @@
 <body>
 <canvas id="canvas" width="500" height="500"></canvas>
 <script>
+  function readTextFile(file, callback) {
+    let rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+      if (rawFile.readyState === 4 && rawFile.status === "200") {
+        callback(rawFile.responseText);
+      }
+    }
+    rawFile.send(null);
+  }
+  readTextFile("http://127.0.0.1:8887/chart_data.json", function(text){
+    let data = JSON.parse(text);
+    console.log(data);
+  });
   let element = document.getElementById('canvas');
   const graphr = graph.createCanvasGraph(element);
   console.log(graphr);
