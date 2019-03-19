@@ -4,9 +4,17 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rimraf ./dist && rollup lib/index.js --config rollup.config.js --format iife --name graph --file dist/bundle.js"
   },
   "keywords": [],
   "author": "yarphen",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "rimraf": "^2.6.3",
+    "rollup": "^1.6.0",
+    "rollup-plugin-commonjs": "^9.2.1",
+    "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-terser": "^4.0.4"
+  },
+  "dependencies": {}
 }
