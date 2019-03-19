@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../dist/bundle.js"></script>
+    <script>
+        const element = document.getElementById('graph');
+        const myGraph = graph.createSVGGraph(element);
+        const create1toNarray = n => Array.from({ length: n }).map((item, index) => index + 1);
+        const createRandomArray = n => Array.from({ length: n }).map(item => Math.random());
+        const x1 = create1toNarray(100);
+        const y1 = createRandomArray(100);
+        const x2 = create1toNarray(50);
+        const y2 = createRandomArray(50);
+        myGraph.setData([
+            { name: '#1', color: '#00ff00', values: { x: x1, y: y1 } },
+            { name: '#2', color: '#00ff00', values: { x: x2, y: y2 } },
+        ]);
+        myGraph.refresh();
+    </script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    html, body {
+        width: 100%;
+        height: 100%;
+    }
+    body {
+        display: flex;
+        justify-content: center;
+    }
+    #graph {
+        align-self: center;
+        justify-self: center;
+        background-color: #eeeeee;
+        width: 500px;
+        height: 500px;
+    }
+</style>
+<body>
+    <div id="graph"></div>
+</body>
+</html>
