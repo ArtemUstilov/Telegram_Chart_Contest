@@ -8,6 +8,21 @@
     <script src="../../dist/bundle.js"></script>
 </head>
 <body>
-    
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+      let element = document.getElementById('canvas');
+      const graphr = graph.createCanvasGraph(element);
+      console.log(graphr);
+      const data = [
+        { name: 'BlaBla', color: '#FF0000', values: { x: [1, 2, 3], y: [1, 2, 3] } },
+        { name: 'HaHa', color: '#00FF00', values: { x: [1, 2, 3], y: [3, 1, 2] } },
+      ];
+
+      const scale = { minX: 0, maxX: 4, minY: 0, maxY: 4 };
+
+      graphr.setData(data);
+      graphr.setScale(scale);
+      graphr.refresh();
+    </script>
 </body>
 </html>
