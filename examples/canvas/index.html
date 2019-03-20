@@ -10,15 +10,16 @@
 </head>
 <body>
 <div class="container">
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <canvas id="canvas" width="300" height="500"></canvas>
     <div class="preview-wrap">
-        <canvas id="preview" width="500" height="50"></canvas>
+        <canvas id="preview" width="300" height="50"></canvas>
         <div id="bg-preview"></div>
         <div id="bg-preview-active"></div>
         <div id="marker" class="marker"></div>
         <div id="dragCircle"></div>
     </div>
 </div>
+<p id="test"></p>
 <script>
   let data;
   fetch('/data/chart_data.json')
@@ -62,7 +63,7 @@
     dragMaster.makeDraggable(el,
       element.getBoundingClientRect().left, element.offsetWidth,
       8, document.getElementById('bg-preview-active'),
-        document.getElementById('dragCircle'), 70);
+      document.getElementById('dragCircle'), 70);
   }
 
 
@@ -78,9 +79,10 @@
     let bgElem;
     let dragCirc;
     let circleSize;
-    function getMouseOffset(target, e) {
+
+    function getMouseOffset(target, pgX, pgY) {
       const docPos = { x: target.offsetLeft, y: target.offsetTop };
-      return { x: e.pageX - docPos.x, y: e.pageY - docPos.y }
+      return { x: pgX - docPos.x, y: pgY - docPos.y }
     }
 
     function mouseUp() {
@@ -90,18 +92,20 @@
       dragCirc.style.transform = 'translateY(35px) translateX(35px)';
       document.onmousemove = null;
       document.onmouseup = null;
-      // document.ontouchstart = null;
-      // document.ontouchend = null;
-      // document.ontouchmove = null;
+      document.ontouchstart = null;
+      document.ontouchend = null;
+      document.ontouchmove = null;
       document.ondragstart = null;
       document.body.onselectstart = null
     }
-    const dragCircleRightUpd = (width) => dragCirc.style.left = (dragObject.offsetLeft + width - circleSize/2 + mWidth*3/2) + 'px';
-    const dragCircleLeftUpd = (left) => dragCirc.style.left = (left - circleSize/2 + mWidth/2) + 'px';
-    const dragCircleMoveUpd = (d) => dragCirc.style.left = (d + dragObject.offsetWidth/2 - circleSize/2) + 'px';
+
+    const dragCircleRightUpd = (width) => dragCirc.style.left = (dragObject.offsetLeft + width - circleSize / 2 + mWidth * 3 / 2) + 'px';
+    const dragCircleLeftUpd = (left) => dragCirc.style.left = (left - circleSize / 2 + mWidth / 2) + 'px';
+    const dragCircleMoveUpd = (d) => dragCirc.style.left = (d + dragObject.offsetWidth / 2 - circleSize / 2) + 'px';
 
     function stretchRight(e) {
-      let width = e.pageX - dragObject.offsetLeft - leftEdge;
+      let { pageX } = getProps(e, 'pageX');
+      let width = pageX - dragObject.offsetLeft - leftEdge;
       if (dragObject.offsetLeft + width > clientWidth) {
         width = clientWidth - dragObject.offsetLeft;
       }
@@ -109,31 +113,36 @@
       updatePos(width);
       dragCircleRightUpd(width);
     }
-    function updatePos(width, left){
-      if(width !== undefined) {
+
+    function updatePos(width, left) {
+      if (width !== undefined) {
         dragObject.style.width = width + 'px';
         if (bgElem)
           bgElem.style.width = width + mWidth + 'px';
       }
-      if(left !== undefined){
+      if (left !== undefined) {
         dragObject.style.left = left + 'px';
         if (bgElem)
           bgElem.style.left = left + 'px';
       }
     }
+
     function stretchLeft(e) {
-        let left = e.pageX - leftEdge < 0 ? 0 : e.pageX - leftEdge;
-        let width = dragObject.offsetLeft + dragObject.clientWidth - left;
-        if(width < 1) {
-          width = 0;
-          left = dragObject.offsetLeft+dragObject.offsetWidth - mWidth*2;
-        }
-        updatePos(width, left);
-        dragCircleLeftUpd(left);
+      let { pageX } = getProps(e, 'pageX');
+      let left = pageX - leftEdge < 0 ? 0 : pageX - leftEdge;
+      let width = dragObject.offsetLeft + dragObject.clientWidth - left;
+      if (width < 1) {
+        width = 0;
+        left = dragObject.offsetLeft + dragObject.offsetWidth - mWidth * 2;
+      }
+      updatePos(width, left);
+      dragCircleLeftUpd(left);
     }
 
     function mouseMove(e) {
-      let d = e.pageX - mouseOffset.x;
+      let { pageX } = getProps(e, 'pageX');
+
+      let d = pageX - mouseOffset.x;
       let r = offsetWidth - dragObject.offsetWidth;
       d = d < 0 ? 0 : d;
       d = d > r ? r : d;
@@ -142,31 +151,48 @@
       dragCircleMoveUpd(d);
     }
 
+    function getProps(e, ...props) {
+      let res = {};
+      if (e[props[0]]) {
+        props.forEach(x => res[x] = e[x])
+      } else if (e.touches) {
+        props.forEach(x => {
+          if (x === 'offsetX')
+            res[x] = e.touches[0].pageX - e.touches[0].target.offsetLeft;
+          else
+            res[x] = e.touches[0][x]
+        })
+      }
+      return res;
+    }
+
     function mouseDown(e) {
-      if (e.which !== 1) return;
-      dragObject = this;
+      let { offsetX, pageX, pageY } = getProps(e, 'offsetX', 'pageX', 'pageY');
+      dragObject = this.childNodes[7];
+      console.log(dragObject)
       dragCirc.style.width = '70px';
       dragCirc.style.height = '70px';
       dragCirc.style.transform = 'translateY(0) translateX(0)';
-      // dragCirc.style.top = '-10px';
-      mouseOffset = getMouseOffset(this, e);
+      mouseOffset = getMouseOffset(dragObject, pageX, pageY);
       dragObjWidth = dragObject.clientWidth;
-      const x = e.offsetX;
-      if (x > dragObject.clientWidth) {
+      const x = pageX - this.getBoundingClientRect().left;
+      console.log(x)
+
+      if (x > dragObject.offsetLeft + dragObject.clientWidth) {
         document.onmousemove = stretchRight;
-        // document.ontouchmove = stretchRight;
+        document.ontouchmove = stretchRight;
         dragCircleRightUpd(dragObject.clientWidth);
-      }else if (x < 0) {
+      } else if (x < dragObject.offsetLeft + mWidth*2) {
         document.onmousemove = stretchLeft;
-        // document.ontouchmove = stretchLeft;
+        document.ontouchmove = stretchLeft;
         dragCircleLeftUpd(dragObject.offsetLeft);
-      }else {
+      } else {
         document.onmousemove = mouseMove;
-        // document.ontouchmove = mouseMove;
+        document.ontouchmove = mouseMove;
         dragCircleMoveUpd(dragObject.offsetLeft);
       }
       document.onmouseup = mouseUp;
-      // document.ontouchend = mouseUp;
+      document.ontouchend = mouseUp;
       document.ondragstart = function () {
       };
       document.body.onselectstart = function () {
@@ -175,9 +201,8 @@
 
     return {
       makeDraggable: function (element, left, width, markersWidth, bgEl, dragCircle, size) {
-        // TODO add touch handling
-        element.onmousedown = mouseDown;
-        // element.ontouchstart = mouseDown;
+        element.parentNode.onmousedown = mouseDown;
+        element.parentNode.ontouchstart = mouseDown;
         leftEdge = left;
         rightEdge = left + width;
         mWidth = markersWidth;

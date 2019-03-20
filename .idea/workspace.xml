@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9bfc3132-e8b9-4f92-8379-154b53ea9568" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/canvas/canvas.css" beforeDir="false" afterPath="$PROJECT_DIR$/examples/canvas/canvas.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/canvas/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/examples/canvas/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/canvas/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/canvas/index.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -22,10 +20,10 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/canvas/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="159" column="46" selection-start-line="159" selection-start-column="46" selection-end-line="159" selection-end-column="46" />
+            <state relative-caret-position="431">
+              <caret line="184" column="53" selection-start-line="184" selection-start-column="53" selection-end-line="184" selection-end-column="53" />
               <folding>
-                <marker date="1553118754364" expanded="true" signature="2723:2787" ph="..." />
+                <marker date="1553124768001" expanded="true" signature="2739:2803" ph="..." />
               </folding>
             </state>
           </provider>
@@ -34,7 +32,7 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/core/canvas/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6">
+            <state relative-caret-position="85">
               <caret line="5" column="1" lean-forward="true" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
             </state>
           </provider>
@@ -43,8 +41,8 @@
       <file leaf-file-name="canvas.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/canvas/canvas.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="737">
-              <caret line="56" column="55" selection-start-line="56" selection-start-column="55" selection-end-line="56" selection-end-column="55" />
+            <state relative-caret-position="170">
+              <caret line="10" column="24" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -106,6 +104,12 @@
             <path>
               <item name="telegram-contest-graphs" type="b2602c69:ProjectViewProjectNode" />
               <item name="telegram-contest-graphs" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+              <item name="canvas" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="telegram-contest-graphs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="telegram-contest-graphs" type="462c0819:PsiDirectoryNode" />
               <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -152,12 +156,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1553103989600</updated>
-      <workItem from="1553103992851" duration="7846000" />
+      <workItem from="1553103992851" duration="12320000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7846000" />
+    <option name="totallyTimeSpent" value="12320000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -195,26 +199,26 @@
         <state relative-caret-position="-470" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/core/canvas/index.js">
+    <entry file="file://$PROJECT_DIR$/examples/canvas/canvas.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6">
-          <caret line="5" column="1" lean-forward="true" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
+        <state relative-caret-position="170">
+          <caret line="10" column="24" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/canvas/canvas.css">
+    <entry file="file://$PROJECT_DIR$/lib/core/canvas/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="737">
-          <caret line="56" column="55" selection-start-line="56" selection-start-column="55" selection-end-line="56" selection-end-column="55" />
+        <state relative-caret-position="85">
+          <caret line="5" column="1" lean-forward="true" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/canvas/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="159" column="46" selection-start-line="159" selection-start-column="46" selection-end-line="159" selection-end-column="46" />
+        <state relative-caret-position="431">
+          <caret line="184" column="53" selection-start-line="184" selection-start-column="53" selection-end-line="184" selection-end-column="53" />
           <folding>
-            <marker date="1553118754364" expanded="true" signature="2723:2787" ph="..." />
+            <marker date="1553124768001" expanded="true" signature="2739:2803" ph="..." />
           </folding>
         </state>
       </provider>
