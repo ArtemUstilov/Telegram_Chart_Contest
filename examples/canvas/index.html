@@ -98,6 +98,7 @@
         const diff = totalMaxX - totalMinX;
         let prevScale, prevData;
         const updater = (min, max) => {
+          console.time('updater');
           if (isNaN(min) || isNaN(max)) {
             return;
           }
@@ -109,12 +110,17 @@
           const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
           scale = { minX, maxX, minY, maxY };
           graph.setScale(scale);
+          console.timeEnd('updater');
+          console.timeStamp('updater');
         };
         const draw = () => {
           const scale = graph.getScale();
           const data = graph.getData();
           if (prevScale !== scale || data !== prevData) {
+            console.time('refresh');
             graph.refresh();
+            console.timeEnd('refresh');
+            console.timeStamp('refresh');
           }
           prevScale = scale;
           prevData = data;
@@ -228,6 +234,7 @@
       }
 
       function mouseMove(e) {
+        console.time('mousemove');
         let { pageX } = getProps(e, 'pageX');
 
         let d = pageX - mouseOffset.x;
@@ -237,6 +244,8 @@
 
         updatePos(undefined, d);
         dragCircleMoveUpd(d);
+        console.timeEnd('mousemove');
+        console.timeStamp('mousemove');
       }
 
       function getProps(e, ...props) {
@@ -255,6 +264,7 @@
       }
 
       function mouseDown(e) {
+        console.time('mousedown');
         let { offsetX, pageX, pageY } = getProps(e, 'offsetX', 'pageX', 'pageY');
         dragObject = this.childNodes[7];
         // console.log(dragObject)
@@ -285,6 +295,9 @@
         };
         document.body.onselectstart = function () {
         };
+
+        console.timeEnd('mousedown');
+        console.timeStamp('mousedown');
       }
 
       return {
