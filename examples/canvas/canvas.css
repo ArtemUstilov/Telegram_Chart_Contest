@@ -86,6 +86,7 @@
     height: 20px;
     border: 1px solid;
     border-radius: 50%;
+    transition: all 0.7s;
 }
 button:focus {
     outline:0;
@@ -104,19 +105,25 @@ button:focus {
     margin-left: 8px;
 }
 .animate{
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
+    margin-left: -25px;
     border-radius: 50%;
-    background-color: #00F;
+    border: 15px solid #aed0e7;
+    position: absolute;
+    opacity: 0;
+    z-index: 100;
 }
 .clicked{
-    animation: 1s circles;
+    animation: 0.7s circles forwards;
 }
 @keyframes circles {
     from{
-        opacity: 1;
+        opacity: 0.7;
+       transform: scale(0);
     }
     to{
         opacity: 0;
+        transform: scale(1);
     }
 }

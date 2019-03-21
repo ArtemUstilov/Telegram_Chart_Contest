@@ -2,23 +2,23 @@
 <html>
 
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Page Title</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="/dist/bundle.js"></script>
-  <link rel="stylesheet" type="text/css" href="canvas.css">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/dist/bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="canvas.css">
 </head>
 
 <body>
-  <div class="container" id="container">
+<div class="container" id="container">
     <div class="preview-wrap" id="preview-wrap">
-      <div id="bg-preview"></div>
-      <div id="bg-preview-active"></div>
-      <div id="marker" class="marker"></div>
-      <div id="dragCircle"></div>
+        <div id="bg-preview"></div>
+        <div id="bg-preview-active"></div>
+        <div id="marker" class="marker"></div>
+        <div id="dragCircle"></div>
     </div>
-    <!--<div id="btn-box"></div>-->
+    <div id="btn-box"></div>
 </div>
 <script>
   let data;
@@ -94,7 +94,7 @@
     };
     const createGraphUpdater = (graph, data, totalMinX, totalMaxX) => {
       const diff = totalMaxX - totalMinX;
-      let prevScale, prevData;
+      let prevScale, prevData, prevMinXInd, prevMaxXInd;
       const updater = (min, max) => {
         console.time('updater');
         if (isNaN(min) || isNaN(max)) {
@@ -106,10 +106,22 @@
         const maxXIndex = findClosestValueIndex(data.x, maxX);
         const minY = Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
         const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
-        scale = { minX, maxX, minY, maxY };
+        let scale = { minX, maxX, minY, maxY };
+        prevMinXInd = minXIndex;
+        prevMaxXInd = maxXIndex;
         graph.setScale(scale);
         console.timeEnd('updater');
         console.timeStamp('updater');
+      };
+      const updateLines = (data) => {
+        console.time('updateLines');
+        const minY = Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
+        const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
+        let scale = { ...prevScale, minY, maxY };
+        graph.setScale(scale);
+        graph.setData(data);
+        console.timeEnd('updateLines');
+        console.timeStamp('updateLines');
       };
       const draw = () => {
         const scale = graph.getScale();
@@ -124,7 +136,7 @@
         prevData = data;
         requestAnimationFrame(draw);
       };
-      return { draw, updater };
+      return { draw, updater, updateLines };
     }
     const minX = Math.min(...data.x);
     const maxX = Math.max(...data.x);
@@ -135,73 +147,29 @@
     const previewGraphUpdater = createGraphUpdater(previewGraph, data, minX, maxX);
     canvasGraphUpdater.updater(0, 1);
     previewGraphUpdater.updater(0, 1);
-    let el = document.getElementById('marker');
-    graph.dragMaster.makeDraggable(el,
-      element.getBoundingClientRect().left, element.offsetWidth,
-      8, document.getElementById('bg-preview-active'),
-      document.getElementById('dragCircle'), 70, canvasGraphUpdater.updater);
+
+    graph.dragMaster.makeDraggable(
+      document.getElementById('marker'), // element to make draggable
+      element.getBoundingClientRect().left, // left barrier
+      element.offsetWidth, // width of place to drag within
+      8, // width of left and right details
+      document.getElementById('bg-preview-active'), // active bg element
+      70, // drag circle size
+      canvasGraphUpdater.updater // callback
+    );
+
+    graph.btnMaster.drawButtons(
+      data, // data set
+      document.getElementById('btn-box'), // parent div
+      canvasGraphUpdater.updateLines, // callbacks
+      previewGraphUpdater.updateLines);
 
     canvasGraphUpdater.draw();
-    previewGraph.refresh();
+    previewGraphUpdater.draw();
 
-    // btnMaster.drawButtons(data, document.getElementById('btn-box'));
+
   }
-
-
-  // in progress
-  const btnMaster = (function() {
-    let buttons;
-    let parentElem;
-    function format(data){
-      return data.lines.map(line=>({color:line.color, name: line.name}));
-    }
-    let btnsState = {};
-    function draw(){
-        buttons.forEach(b=>{
-          let name = document.createElement('p');
-          name.innerText = b.name;
-
-          let circle = document.createElement("div");
-          circle.className = 'btn-circle';
-          circle.style.backgroundColor = b.color;
-          circle.style.borderColor = b.color;
-
-          let anim = document.createElement("div");
-          anim.className = 'animate';
-
-          let btn = document.createElement('button');
-          btnsState[b.name] = true;
-          function onclick(e){
-            anim.classList.remove('clicked');
-            anim.classList.add('clicked');
-            if(btnsState[b.name]){
-              circle.style.backgroundColor = 'white';
-            }else{
-              circle.style.backgroundColor = b.color;
-            }
-            btnsState[b.name] = !btnsState[b.name];
-          }
-          btn.className = 'check-btn';
-          btn.onclick = onclick;
-          btn.ontouchstart = onclick;
-          btn.style.gridArea = `span 40 / span ${Math.ceil(b.name.length*0.9 + 9)}`;
-          btn.appendChild(circle);
-          btn.appendChild(name);
-          btn.appendChild(anim);
-          parentElem.appendChild(btn);
-        })
-    }
-   return ({
-     drawButtons: (data, parent) => {
-       buttons = format(data);
-       parentElem = parent;
-       draw();
-    }
-   })
-  })();
-
-
-  </script>
+</script>
 </body>
 
 </html>
