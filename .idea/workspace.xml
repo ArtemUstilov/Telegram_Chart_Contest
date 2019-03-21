@@ -4,6 +4,7 @@
     <list default="true" id="9bfc3132-e8b9-4f92-8379-154b53ea9568" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/examples/canvas/canvas.css" beforeDir="false" afterPath="$PROJECT_DIR$/examples/canvas/canvas.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/canvas/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/examples/canvas/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/core/canvas/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/canvas/index.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,14 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/canvas/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="21" column="6" selection-start-line="21" selection-start-column="6" selection-end-line="21" selection-end-column="6" />
-              <folding>
-                <marker date="1553191663887" expanded="true" signature="3744:3808" ph="..." />
-              </folding>
+            <state relative-caret-position="-221">
+              <caret line="281" column="6" selection-start-line="281" selection-start-column="6" selection-end-line="281" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -38,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="canvas.css" pinned="false" current-in-tab="true">
+      <file leaf-file-name="canvas.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/canvas/canvas.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="737">
-              <caret line="101" column="23" selection-start-line="101" selection-start-column="23" selection-end-line="101" selection-end-column="23" />
+            <state relative-caret-position="720">
+              <caret line="103" column="21" selection-start-line="103" selection-start-column="21" selection-end-line="103" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -56,8 +54,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/lib/core/canvas/index.js" />
-        <option value="$PROJECT_DIR$/examples/canvas/index.html" />
         <option value="$PROJECT_DIR$/examples/canvas/canvas.css" />
+        <option value="$PROJECT_DIR$/examples/canvas/index.html" />
       </list>
     </option>
   </component>
@@ -156,12 +154,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1553103989600</updated>
-      <workItem from="1553103992851" duration="22476000" />
+      <workItem from="1553103992851" duration="23152000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22476000" />
+    <option name="totallyTimeSpent" value="23152000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -206,20 +204,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/canvas/index.html">
+    <entry file="file://$PROJECT_DIR$/examples/canvas/canvas.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="21" column="6" selection-start-line="21" selection-start-column="6" selection-end-line="21" selection-end-column="6" />
-          <folding>
-            <marker date="1553191663887" expanded="true" signature="3744:3808" ph="..." />
-          </folding>
+        <state relative-caret-position="720">
+          <caret line="103" column="21" selection-start-line="103" selection-start-column="21" selection-end-line="103" selection-end-column="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/canvas/canvas.css">
+    <entry file="file://$PROJECT_DIR$/examples/canvas/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="737">
-          <caret line="101" column="23" selection-start-line="101" selection-start-column="23" selection-end-line="101" selection-end-column="23" />
+        <state relative-caret-position="-221">
+          <caret line="281" column="6" selection-start-line="281" selection-start-column="6" selection-end-line="281" selection-end-column="6" />
         </state>
       </provider>
     </entry>
