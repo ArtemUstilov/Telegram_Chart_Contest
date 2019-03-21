@@ -57,3 +57,47 @@
     transition: width 0.3s, height 0.3s, transform 0.3s;
 }
 
+
+#btn-box{
+    width: 100%;
+    position: relative;
+    top: 70px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 5px);
+    grid-gap: 1px;
+}
+.check-btn{
+    border: 1px solid #aed0e7;
+    color: #43484b;
+    background-color: #fff;
+    border-radius:15px;
+    height: 30px;
+    width: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-right: 10px;
+}
+.check-btn p{
+    margin: 0 5px;
+}
+.btn-circle{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+
+.check-btn:before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    position: absolute;
+    margin-top: -1px;
+    margin-left: 8px;
+}
+

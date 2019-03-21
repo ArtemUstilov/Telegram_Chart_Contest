@@ -18,6 +18,7 @@
         <div id="marker" class="marker"></div>
         <div id="dragCircle"></div>
     </div>
+    <div id="btn-box"></div>
 </div>
 <p id="test"></p>
 <script>
@@ -64,8 +65,40 @@
       element.getBoundingClientRect().left, element.offsetWidth,
       8, document.getElementById('bg-preview-active'),
       document.getElementById('dragCircle'), 70);
-  }
 
+    btnMaster.drawButtons(data, document.getElementById('btn-box'));
+  }
+  const btnMaster = (function() {
+    let buttons;
+    let parentElem;
+    function format(data){
+      return data.lines.map(line=>({color:line.color, name: line.name}));
+    }
+    function draw(){
+        buttons.forEach(b=>{
+          let name = document.createElement('p');
+          name.innerText = b.name;
+
+          let circle = document.createElement("div");
+          circle.className = 'btn-circle';
+          circle.style.backgroundColor = b.color;
+
+          let btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.style.gridArea = `span 40 / span ${Math.ceil(b.name.length*0.9 + 9)}`;
+          btn.appendChild(circle);
+          btn.appendChild(name);
+          parentElem.appendChild(btn);
+        })
+    }
+   return ({
+     drawButtons: (data, parent) => {
+       buttons = format(data);
+       parentElem = parent;
+       draw();
+    }
+   })
+  })();
 
   const dragMaster = (function () {
     let dragObject;
@@ -79,12 +112,10 @@
     let bgElem;
     let dragCirc;
     let circleSize;
-
     function getMouseOffset(target, pgX, pgY) {
       const docPos = { x: target.offsetLeft, y: target.offsetTop };
       return { x: pgX - docPos.x, y: pgY - docPos.y }
     }
-
     function mouseUp() {
       dragObject = null;
       dragCirc.style.width = '0';
@@ -98,11 +129,9 @@
       document.ondragstart = null;
       document.body.onselectstart = null
     }
-
     const dragCircleRightUpd = (width) => dragCirc.style.left = (dragObject.offsetLeft + width - circleSize / 2 + mWidth * 3 / 2) + 'px';
     const dragCircleLeftUpd = (left) => dragCirc.style.left = (left - circleSize / 2 + mWidth / 2) + 'px';
     const dragCircleMoveUpd = (d) => dragCirc.style.left = (d + dragObject.offsetWidth / 2 - circleSize / 2) + 'px';
-
     function stretchRight(e) {
       let { pageX } = getProps(e, 'pageX');
       let width = pageX - dragObject.offsetLeft - leftEdge;
@@ -113,7 +142,6 @@
       updatePos(width);
       dragCircleRightUpd(width);
     }
-
     function updatePos(width, left) {
       if (width !== undefined) {
         dragObject.style.width = width + 'px';
@@ -126,7 +154,6 @@
           bgElem.style.left = left + 'px';
       }
     }
-
     function stretchLeft(e) {
       let { pageX } = getProps(e, 'pageX');
       let left = pageX - leftEdge < 0 ? 0 : pageX - leftEdge;
@@ -138,10 +165,8 @@
       updatePos(width, left);
       dragCircleLeftUpd(left);
     }
-
     function mouseMove(e) {
       let { pageX } = getProps(e, 'pageX');
-
       let d = pageX - mouseOffset.x;
       let r = offsetWidth - dragObject.offsetWidth;
       d = d < 0 ? 0 : d;
@@ -157,9 +182,6 @@
         props.forEach(x => res[x] = e[x])
       } else if (e.touches) {
         props.forEach(x => {
-          if (x === 'offsetX')
-            res[x] = e.touches[0].pageX - e.touches[0].target.offsetLeft;
-          else
             res[x] = e.touches[0][x]
         })
       }
@@ -167,7 +189,7 @@
     }
 
     function mouseDown(e) {
-      let { offsetX, pageX, pageY } = getProps(e, 'offsetX', 'pageX', 'pageY');
+      let { pageX, pageY } = getProps(e, 'pageX', 'pageY');
       dragObject = this.childNodes[7];
       console.log(dragObject)
       dragCirc.style.width = '70px';
@@ -193,10 +215,8 @@
       }
       document.onmouseup = mouseUp;
       document.ontouchend = mouseUp;
-      document.ondragstart = function () {
-      };
-      document.body.onselectstart = function () {
-      };
+      document.ondragstart = function () {};
+      document.body.onselectstart = function () {};
     }
 
     return {
