@@ -1,219 +1,309 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/dist/bundle.js"></script>
-    <link rel="stylesheet" type="text/css" href="canvas.css">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/dist/bundle.js"></script>
+  <link rel="stylesheet" type="text/css" href="canvas.css">
 </head>
+
 <body>
-<div class="container">
+  <div class="container">
     <canvas id="canvas" width="300" height="500"></canvas>
     <div class="preview-wrap">
-        <canvas id="preview" width="300" height="50"></canvas>
-        <div id="bg-preview"></div>
-        <div id="bg-preview-active"></div>
-        <div id="marker" class="marker"></div>
-        <div id="dragCircle"></div>
+      <canvas id="preview" width="300" height="50"></canvas>
+      <div id="bg-preview"></div>
+      <div id="bg-preview-active"></div>
+      <div id="marker" class="marker"></div>
+      <div id="dragCircle"></div>
     </div>
-</div>
-<p id="test"></p>
-<script>
-  let data;
-  fetch('/data/chart_data.json')
-    .then(res => res.json())
-    .then(res => {
-      data = format(res[0]);
-      run(data);
-    })
-    .catch(err => console.log(err));
+  </div>
+  <p id="test"></p>
+  <script>
+    let data;
+    fetch('/data/chart_data.json')
+      .then(res => res.json())
+      .then(res => {
+        data = format(res[0]);
+        run(data);
+      })
+      .catch(err => console.log(err));
 
-  function format(data) {
-    return ({
-      lines: data.columns.filter(col => data.types[col[0]] === 'line').map(line => ({
-        values: line.slice(1),
-        color: data.colors[line[0]],
-        name: data.names[line[0]],
-      })),
-      x: data.columns.find(col => data.types[col[0]] === 'x').slice(1),
-    })
-  }
-
-  function run(data) {
-    let element = document.getElementById('canvas');
-    let preview = document.getElementById('preview');
-    const canvasGraph = graph.createCanvasGraph(element);
-    const previewGraph = graph.createCanvasGraph(preview);
-    const minX = Math.min(...data.x);
-    const maxX = Math.max(...data.x);
-    const minY = Math.min(...data.lines[0].values, ...data.lines[1].values);
-    const maxY = Math.max(...data.lines[0].values, ...data.lines[1].values);
-    const scale = { minX, maxX, minY, maxY };
-    //const scale2 = { minX: 3, maxX: 6, minY: 1, maxY: 6 };
-    canvasGraph.setData(data);
-    canvasGraph.setScale(scale);
-    canvasGraph.refresh();
-    previewGraph.setData(data);
-    previewGraph.setScale(scale);
-    previewGraph.refresh();
-    let el = document.getElementById('marker');
-
-    dragMaster.makeDraggable(el,
-      element.getBoundingClientRect().left, element.offsetWidth,
-      8, document.getElementById('bg-preview-active'),
-      document.getElementById('dragCircle'), 70);
-  }
-
-
-  const dragMaster = (function () {
-    let dragObject;
-    let mouseOffset;
-    let leftEdge;
-    let rightEdge;
-    let mWidth;
-    let offsetWidth;
-    let clientWidth;
-    let dragObjWidth;
-    let bgElem;
-    let dragCirc;
-    let circleSize;
-
-    function getMouseOffset(target, pgX, pgY) {
-      const docPos = { x: target.offsetLeft, y: target.offsetTop };
-      return { x: pgX - docPos.x, y: pgY - docPos.y }
+    function format(data) {
+      return ({
+        lines: data.columns.filter(col => data.types[col[0]] === 'line').map(line => ({
+          values: line.slice(1),
+          color: data.colors[line[0]],
+          name: data.names[line[0]],
+        })),
+        x: data.columns.find(col => data.types[col[0]] === 'x').slice(1),
+      })
     }
 
-    function mouseUp() {
-      dragObject = null;
-      dragCirc.style.width = '0';
-      dragCirc.style.height = '0';
-      dragCirc.style.transform = 'translateY(35px) translateX(35px)';
-      document.onmousemove = null;
-      document.onmouseup = null;
-      document.ontouchstart = null;
-      document.ontouchend = null;
-      document.ontouchmove = null;
-      document.ondragstart = null;
-      document.body.onselectstart = null
-    }
-
-    const dragCircleRightUpd = (width) => dragCirc.style.left = (dragObject.offsetLeft + width - circleSize / 2 + mWidth * 3 / 2) + 'px';
-    const dragCircleLeftUpd = (left) => dragCirc.style.left = (left - circleSize / 2 + mWidth / 2) + 'px';
-    const dragCircleMoveUpd = (d) => dragCirc.style.left = (d + dragObject.offsetWidth / 2 - circleSize / 2) + 'px';
-
-    function stretchRight(e) {
-      let { pageX } = getProps(e, 'pageX');
-      let width = pageX - dragObject.offsetLeft - leftEdge;
-      if (dragObject.offsetLeft + width > clientWidth) {
-        width = clientWidth - dragObject.offsetLeft;
-      }
-      width = width < 0 ? 0 : width;
-      updatePos(width);
-      dragCircleRightUpd(width);
-    }
-
-    function updatePos(width, left) {
-      if (width !== undefined) {
-        dragObject.style.width = width + 'px';
-        if (bgElem)
-          bgElem.style.width = width + mWidth + 'px';
-      }
-      if (left !== undefined) {
-        dragObject.style.left = left + 'px';
-        if (bgElem)
-          bgElem.style.left = left + 'px';
-      }
-    }
-
-    function stretchLeft(e) {
-      let { pageX } = getProps(e, 'pageX');
-      let left = pageX - leftEdge < 0 ? 0 : pageX - leftEdge;
-      let width = dragObject.offsetLeft + dragObject.clientWidth - left;
-      if (width < 1) {
-        width = 0;
-        left = dragObject.offsetLeft + dragObject.offsetWidth - mWidth * 2;
-      }
-      updatePos(width, left);
-      dragCircleLeftUpd(left);
-    }
-
-    function mouseMove(e) {
-      let { pageX } = getProps(e, 'pageX');
-
-      let d = pageX - mouseOffset.x;
-      let r = offsetWidth - dragObject.offsetWidth;
-      d = d < 0 ? 0 : d;
-      d = d > r ? r : d;
-
-      updatePos(undefined, d);
-      dragCircleMoveUpd(d);
-    }
-
-    function getProps(e, ...props) {
-      let res = {};
-      if (e[props[0]]) {
-        props.forEach(x => res[x] = e[x])
-      } else if (e.touches) {
-        props.forEach(x => {
-          if (x === 'offsetX')
-            res[x] = e.touches[0].pageX - e.touches[0].target.offsetLeft;
-          else
-            res[x] = e.touches[0][x]
-        })
-      }
-      return res;
-    }
-
-    function mouseDown(e) {
-      let { offsetX, pageX, pageY } = getProps(e, 'offsetX', 'pageX', 'pageY');
-      dragObject = this.childNodes[7];
-      console.log(dragObject)
-      dragCirc.style.width = '70px';
-      dragCirc.style.height = '70px';
-      dragCirc.style.transform = 'translateY(0) translateX(0)';
-      mouseOffset = getMouseOffset(dragObject, pageX, pageY);
-      dragObjWidth = dragObject.clientWidth;
-      const x = pageX - this.getBoundingClientRect().left;
-      console.log(x)
-
-      if (x > dragObject.offsetLeft + dragObject.clientWidth) {
-        document.onmousemove = stretchRight;
-        document.ontouchmove = stretchRight;
-        dragCircleRightUpd(dragObject.clientWidth);
-      } else if (x < dragObject.offsetLeft + mWidth*2) {
-        document.onmousemove = stretchLeft;
-        document.ontouchmove = stretchLeft;
-        dragCircleLeftUpd(dragObject.offsetLeft);
-      } else {
-        document.onmousemove = mouseMove;
-        document.ontouchmove = mouseMove;
-        dragCircleMoveUpd(dragObject.offsetLeft);
-      }
-      document.onmouseup = mouseUp;
-      document.ontouchend = mouseUp;
-      document.ondragstart = function () {
+    function run(data) {
+      let element = document.getElementById('canvas');
+      let preview = document.getElementById('preview');
+      const canvasGraph = graph.createCanvasGraph(element);
+      const previewGraph = graph.createCanvasGraph(preview);
+      const findClosestValueIndex = (arr, value) => {
+        let min = 0;
+        let max = arr.length - 1;
+        if (arr[min] > value) {
+          return min;
+        }
+        if (arr[max] < value) {
+          return max;
+        }
+        while (true) {
+          if (max - min === 1) {
+            if (arr[min] === value) {
+              return min;
+            } else {
+              return max;
+            }
+          }
+          const mid = Math.round((min + max) / 2);
+          if (arr[mid] === value) {
+            return mid;
+          }
+          if (arr[mid] < value) {
+            min = mid;
+          } else {
+            max = mid;
+          }
+        }
       };
-      document.body.onselectstart = function () {
+      const findMaximum = (arr, minIndex, maxIndex) => {
+        let max = -Infinity;
+        for (let i = minIndex; i <= maxIndex; i++) {
+          if (arr[i] > max) {
+            max = arr[i];
+          }
+        }
+        return max;
       };
-    }
-
-    return {
-      makeDraggable: function (element, left, width, markersWidth, bgEl, dragCircle, size) {
-        element.parentNode.onmousedown = mouseDown;
-        element.parentNode.ontouchstart = mouseDown;
-        leftEdge = left;
-        rightEdge = left + width;
-        mWidth = markersWidth;
-        offsetWidth = width;
-        bgElem = bgEl
-        clientWidth = offsetWidth - mWidth * 2;
-        dragCirc = dragCircle;
-        circleSize = size;
+      const findMinimum = (arr, minIndex, maxIndex) => {
+        let min = Infinity;
+        for (let i = minIndex; i <= maxIndex; i++) {
+          if (arr[i] < min) {
+            min = arr[i];
+          }
+        }
+        return min;
+      };
+      const createGraphUpdater = (graph, data, totalMinX, totalMaxX) => {
+        const diff = totalMaxX - totalMinX;
+        let prevScale, prevData;
+        const updater = (min, max) => {
+          if (isNaN(min) || isNaN(max)) {
+            return;
+          }
+          const minX = totalMinX + min * diff;
+          const maxX = totalMinX + max * diff;
+          const minXIndex = findClosestValueIndex(data.x, minX);
+          const maxXIndex = findClosestValueIndex(data.x, maxX);
+          const minY = Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
+          const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
+          scale = { minX, maxX, minY, maxY };
+          graph.setScale(scale);
+        };
+        const draw = () => {
+          const scale = graph.getScale();
+          const data = graph.getData();
+          if (prevScale !== scale || data !== prevData) {
+            graph.refresh();
+          }
+          prevScale = scale;
+          prevData = data;
+          requestAnimationFrame(draw);
+        };
+        return { draw, updater };
       }
-    }
-  })();
-</script>
+      const minX = Math.min(...data.x);
+      const maxX = Math.max(...data.x);
+
+      canvasGraph.setData(data);
+      previewGraph.setData(data);
+      const canvasGraphUpdater = createGraphUpdater(canvasGraph, data, minX, maxX);
+      const previewGraphUpdater = createGraphUpdater(previewGraph, data, minX, maxX);
+      canvasGraphUpdater.updater(0, 1);
+      previewGraphUpdater.updater(0, 1);
+      let el = document.getElementById('marker');
+
+      dragMaster.makeDraggable(el,
+        element.getBoundingClientRect().left, element.offsetWidth,
+        8, document.getElementById('bg-preview-active'),
+        document.getElementById('dragCircle'), 70, canvasGraphUpdater.updater);
+
+      canvasGraphUpdater.draw();
+      previewGraph.refresh();
+    };
+
+
+    const dragMaster = (function () {
+      let dragObject;
+      let mouseOffset;
+      let leftEdge;
+      let rightEdge;
+      let mWidth;
+      let offsetWidth;
+      let clientWidth;
+      let dragObjWidth;
+      let bgElem;
+      let dragCirc;
+      let circleSize;
+      let dragHandler;
+      let min = 0;
+      let max = 1;
+      let normalizedWidth = 1;
+
+      function getMouseOffset(target, pgX, pgY) {
+        const docPos = { x: target.offsetLeft, y: target.offsetTop };
+        return { x: pgX - docPos.x, y: pgY - docPos.y }
+      }
+
+      function mouseUp() {
+        dragObject = null;
+        dragCirc.style.width = '0';
+        dragCirc.style.height = '0';
+        dragCirc.style.transform = 'translateY(35px) translateX(35px)';
+        document.onmousemove = null;
+        document.onmouseup = null;
+        document.ontouchstart = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+        document.ondragstart = null;
+        document.body.onselectstart = null
+      }
+
+      const dragCircleRightUpd = (width) => dragCirc.style.left = (dragObject.offsetLeft + width - circleSize / 2 + mWidth * 3 / 2) + 'px';
+      const dragCircleLeftUpd = (left) => dragCirc.style.left = (left - circleSize / 2 + mWidth / 2) + 'px';
+      const dragCircleMoveUpd = (d) => dragCirc.style.left = (d + dragObject.offsetWidth / 2 - circleSize / 2) + 'px';
+
+      function stretchRight(e) {
+        let { pageX } = getProps(e, 'pageX');
+        let width = pageX - dragObject.offsetLeft - leftEdge;
+        if (dragObject.offsetLeft + width > clientWidth) {
+          width = clientWidth - dragObject.offsetLeft;
+        }
+        width = width < 0 ? 0 : width;
+        updatePos(width);
+        dragCircleRightUpd(width);
+      }
+
+      function updatePos(width, left) {
+        if (left !== undefined) {
+          min = left / clientWidth;
+          dragObject.style.left = left + 'px';
+          if (bgElem) {
+            bgElem.style.left = left + 'px';
+          }
+        }
+        if (width !== undefined) {
+          normalizedWidth = width / clientWidth;
+          dragObject.style.width = width + 'px';
+          if (bgElem) {
+            bgElem.style.width = width + mWidth + 'px';
+          }
+        }
+        max = min + normalizedWidth;
+        if (typeof dragHandler === 'function') {
+          dragHandler(min, max);
+        }
+      }
+
+      function stretchLeft(e) {
+        let { pageX } = getProps(e, 'pageX');
+        let left = pageX - leftEdge < 0 ? 0 : pageX - leftEdge;
+        let width = dragObject.offsetLeft + dragObject.clientWidth - left;
+        if (width < 1) {
+          width = 0;
+          left = dragObject.offsetLeft + dragObject.offsetWidth - mWidth * 2;
+        }
+        updatePos(width, left);
+        dragCircleLeftUpd(left);
+      }
+
+      function mouseMove(e) {
+        let { pageX } = getProps(e, 'pageX');
+
+        let d = pageX - mouseOffset.x;
+        let r = offsetWidth - dragObject.offsetWidth;
+        d = d < 0 ? 0 : d;
+        d = d > r ? r : d;
+
+        updatePos(undefined, d);
+        dragCircleMoveUpd(d);
+      }
+
+      function getProps(e, ...props) {
+        let res = {};
+        if (e[props[0]]) {
+          props.forEach(x => res[x] = e[x])
+        } else if (e.touches) {
+          props.forEach(x => {
+            if (x === 'offsetX')
+              res[x] = e.touches[0].pageX - e.touches[0].target.offsetLeft;
+            else
+              res[x] = e.touches[0][x]
+          })
+        }
+        return res;
+      }
+
+      function mouseDown(e) {
+        let { offsetX, pageX, pageY } = getProps(e, 'offsetX', 'pageX', 'pageY');
+        dragObject = this.childNodes[7];
+        // console.log(dragObject)
+        dragCirc.style.width = '70px';
+        dragCirc.style.height = '70px';
+        dragCirc.style.transform = 'translateY(0) translateX(0)';
+        mouseOffset = getMouseOffset(dragObject, pageX, pageY);
+        dragObjWidth = dragObject.clientWidth;
+        const x = pageX - this.getBoundingClientRect().left;
+        // console.log(x)
+
+        if (x > dragObject.offsetLeft + dragObject.clientWidth) {
+          document.onmousemove = stretchRight;
+          document.ontouchmove = stretchRight;
+          dragCircleRightUpd(dragObject.clientWidth);
+        } else if (x < dragObject.offsetLeft + mWidth * 2) {
+          document.onmousemove = stretchLeft;
+          document.ontouchmove = stretchLeft;
+          dragCircleLeftUpd(dragObject.offsetLeft);
+        } else {
+          document.onmousemove = mouseMove;
+          document.ontouchmove = mouseMove;
+          dragCircleMoveUpd(dragObject.offsetLeft);
+        }
+        document.onmouseup = mouseUp;
+        document.ontouchend = mouseUp;
+        document.ondragstart = function () {
+        };
+        document.body.onselectstart = function () {
+        };
+      }
+
+      return {
+        makeDraggable: function (element, left, width, markersWidth, bgEl, dragCircle, size, onDrag) {
+          element.parentNode.onmousedown = mouseDown;
+          element.parentNode.ontouchstart = mouseDown;
+          leftEdge = left;
+          rightEdge = left + width;
+          mWidth = markersWidth;
+          offsetWidth = width;
+          bgElem = bgEl
+          clientWidth = offsetWidth - mWidth * 2;
+          dragCirc = dragCircle;
+          circleSize = size;
+          dragHandler = onDrag;
+        }
+      }
+    })();
+  </script>
 </body>
+
 </html>
