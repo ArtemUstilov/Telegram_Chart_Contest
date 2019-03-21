@@ -87,9 +87,12 @@
 .btn-circle{
     width: 20px;
     height: 20px;
+    border: 1px solid;
     border-radius: 50%;
 }
-
+button:focus {
+    outline:0;
+}
 
 .check-btn:before {
     content: '';
@@ -103,4 +106,20 @@
     margin-top: -1px;
     margin-left: 8px;
 }
-
+.animate{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #00F;
+}
+.clicked{
+    animation: 1s circles;
+}
+@keyframes circles {
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
+}

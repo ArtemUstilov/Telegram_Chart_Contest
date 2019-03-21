@@ -156,6 +156,7 @@
     function format(data){
       return data.lines.map(line=>({color:line.color, name: line.name}));
     }
+    let btnsState = {};
     function draw(){
         buttons.forEach(b=>{
           let name = document.createElement('p');
@@ -164,12 +165,30 @@
           let circle = document.createElement("div");
           circle.className = 'btn-circle';
           circle.style.backgroundColor = b.color;
+          circle.style.borderColor = b.color;
+
+          let anim = document.createElement("div");
+          anim.className = 'animate';
 
           let btn = document.createElement('button');
+          btnsState[b.name] = true;
+          function onclick(e){
+            anim.classList.remove('clicked');
+            anim.classList.add('clicked');
+            if(btnsState[b.name]){
+              circle.style.backgroundColor = 'white';
+            }else{
+              circle.style.backgroundColor = b.color;
+            }
+            btnsState[b.name] = !btnsState[b.name];
+          }
           btn.className = 'check-btn';
+          btn.onclick = onclick;
+          btn.ontouchstart = onclick;
           btn.style.gridArea = `span 40 / span ${Math.ceil(b.name.length*0.9 + 9)}`;
           btn.appendChild(circle);
           btn.appendChild(name);
+          btn.appendChild(anim);
           parentElem.appendChild(btn);
         })
     }
@@ -245,7 +264,7 @@
           normalizedWidth = width / clientWidth;
           dragObject.style.width = width + 'px';
           if (bgElem) {
-            bgElem.style.width = width + mWidth + 'px';
+            bgElem.style.width = width + 'px';
           }
         }
         max = min + normalizedWidth;
@@ -279,7 +298,7 @@
         console.timeEnd('mousemove');
         console.timeStamp('mousemove');
       }
-      
+
       function getProps(e, ...props) {
         let res = {};
         if (e[props[0]]) {
