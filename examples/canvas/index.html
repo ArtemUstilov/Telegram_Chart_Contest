@@ -16,7 +16,6 @@
         <div id="bg-preview"></div>
         <div id="bg-preview-active"></div>
         <div id="marker" class="marker"></div>
-        <div id="dragCircle"></div>
     </div>
     <div id="btn-box"></div>
 </div>
@@ -152,6 +151,7 @@
       document.getElementById('marker'), // element to make draggable
       element.getBoundingClientRect().left, // left barrier
       element.offsetWidth, // width of place to drag within
+      10, // min width between markers
       8, // width of left and right details
       document.getElementById('bg-preview-active'), // active bg element
       70, // drag circle size
