@@ -13,10 +13,8 @@
 </head>
 
 <body>
-  <div class="container">
-    <div id="graph" style="width: 300px; height: 500px"></div>
-    <div class="preview-wrap">
-      <div id="preview" style="width: 300px; height: 50px" ></div>
+  <div class="container" id="container">
+    <div class="preview-wrap" id="preview-wrap">
       <div id="bg-preview"></div>
       <div id="bg-preview-active"></div>
       <div id="marker" class="marker"></div>
@@ -46,10 +44,19 @@
     }
 
     function run(data) {
-      let element = document.getElementById('graph');
-      let preview = document.getElementById('preview');
-      const svgGraph = graph.createSVGGraph(element, graph.dateFormatter(5), graph.numberFormatter(10));
-      const previewGraph = graph.createSVGGraph(preview);
+      let element = document.getElementById('container');
+      let preview = document.getElementById('preview-wrap');
+      const svgGraph = graph.createSVGGraph(element, {
+        width: 300,
+        height:  500,
+        id: 'svg',
+        createAxis: true,
+      });
+      const previewGraph = graph.createSVGGraph(preview, {
+        width: 300,
+        height:  50,
+        id: 'preview',
+      });
       const findMaximum = (arr, minIndex, maxIndex) => {
         let max = -Infinity;
         for (let i = minIndex; i <= maxIndex; i++) {

@@ -45,8 +45,17 @@
   function run(data) {
     let element = document.getElementById('container');
     let preview = document.getElementById('preview-wrap');
-    const canvasGraph = graph.createCanvasGraph(element, 300, 500, 'canvas');
-    const previewGraph = graph.createCanvasGraph(preview, 300, 50, 'preview');
+    const canvasGraph = graph.createCanvasGraph(element, {
+      width: 300,
+      height:  500,
+      id: 'canvas',
+      createAxis: true,
+    });
+    const previewGraph = graph.createCanvasGraph(preview, {
+      width: 300,
+      height:  50,
+      id: 'preview-chart',
+    });
 
     const findMaximum = (arr, minIndex, maxIndex) => {
       let max = -Infinity;
