@@ -8,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/dist/bundle.js"></script>
   <link rel="stylesheet" type="text/css" href="svg.css">
+  <link rel="stylesheet" type="text/css" href="../ckeckboxStyles.css">
+  <link rel="stylesheet" type="text/css" href="../markerStyles.css">
 </head>
 
 <body>
@@ -18,8 +20,8 @@
       <div id="bg-preview"></div>
       <div id="bg-preview-active"></div>
       <div id="marker" class="marker"></div>
-      <div id="dragCircle"></div>
     </div>
+    <div id="btn-box"></div>
   </div>
   <p id="test"></p>
   <script>
@@ -96,7 +98,7 @@
       };
       const createGraphUpdater = (myGraph, data, totalMinX, totalMaxX) => {
         const diff = totalMaxX - totalMinX;
-        let prevScale, prevData;
+        let prevScale, prevData, prevMinXInd, prevMaxXInd, scale;
         const updater = (min, max) => {
           console.time('updater');
           if (isNaN(min) || isNaN(max)) {
@@ -108,10 +110,23 @@
           const maxXIndex = findClosestValueIndex(data.x, maxX);
           const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
           const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
+          prevMinXInd = minXIndex;
+          prevMaxXInd = maxXIndex;
           scale = { minX, maxX, minY, maxY };
           myGraph.setScale(scale);
           console.timeEnd('updater');
           console.timeStamp('updater');
+        };
+        const updateLines = (data) => {
+          console.time('updateLines');
+          console.log(myGraph);
+          const minY = Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
+          const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
+          let scale = { ...prevScale, minY, maxY };
+          myGraph.setScale(scale);
+          myGraph.setData(data);
+          console.timeEnd('updateLines');
+          console.timeStamp('updateLines');
         };
         const draw = () => {
           const scale = myGraph.getScale();
@@ -126,7 +141,7 @@
           prevData = data;
           requestAnimationFrame(draw);
         };
-        return { draw, updater };
+        return { draw, updater, updateLines };
       }
       const minX = Math.min(...data.x);
       const maxX = Math.max(...data.x);
@@ -137,15 +152,25 @@
       const previewGraphUpdater = createGraphUpdater(previewGraph, data, minX, maxX);
       svgGraphUpdater.updater(0, 1);
       previewGraphUpdater.updater(0, 1);
-      let el = document.getElementById('marker');
 
-      dragMaster.makeDraggable(el,
-        element.getBoundingClientRect().left, element.offsetWidth,
-        8, document.getElementById('bg-preview-active'),
-        document.getElementById('dragCircle'), 70, svgGraphUpdater.updater);
+      graph.dragMaster.makeDraggable(
+        document.getElementById('marker'), // element to make draggable
+        element.getBoundingClientRect().left, // left barrier
+        element.offsetWidth, // width of place to drag within
+        10, // min width between markers
+        8, // width of left and right details
+        document.getElementById('bg-preview-active'), // active bg element
+        70, // drag circle size
+        svgGraphUpdater.updater // callback
+      );
+      graph.btnMaster.drawButtons(
+        data, // data set
+        document.getElementById('btn-box'), // parent div
+        svgGraphUpdater.updateLines, // callbacks
+        previewGraphUpdater.updateLines);
 
       svgGraphUpdater.draw();
-      previewGraph.refresh();
+      previewGraphUpdater.draw();
     };
 
 
