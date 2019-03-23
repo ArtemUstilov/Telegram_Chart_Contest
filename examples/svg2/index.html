@@ -46,7 +46,7 @@
     function run(data) {
       let element = document.getElementById('graph');
       let preview = document.getElementById('preview');
-      const svgGraph = graph.createSVGGraph(element);
+      const svgGraph = graph.createSVGGraph(element, graph.dateFormatter(5), graph.numberFormatter(10));
       const previewGraph = graph.createSVGGraph(preview);
       const findClosestValueIndex = (arr, value) => {
         let min = 0;
@@ -94,7 +94,7 @@
         }
         return min;
       };
-      const createGraphUpdater = (graph, data, totalMinX, totalMaxX) => {
+      const createGraphUpdater = (myGraph, data, totalMinX, totalMaxX) => {
         const diff = totalMaxX - totalMinX;
         let prevScale, prevData;
         const updater = (min, max) => {
@@ -106,19 +106,19 @@
           const maxX = totalMinX + max * diff;
           const minXIndex = findClosestValueIndex(data.x, minX);
           const maxXIndex = findClosestValueIndex(data.x, maxX);
-          const minY = Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
+          const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
           const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
           scale = { minX, maxX, minY, maxY };
-          graph.setScale(scale);
+          myGraph.setScale(scale);
           console.timeEnd('updater');
           console.timeStamp('updater');
         };
         const draw = () => {
-          const scale = graph.getScale();
-          const data = graph.getData();
+          const scale = myGraph.getScale();
+          const data = myGraph.getData();
           if (prevScale !== scale || data !== prevData) {
             console.time('refresh');
-            graph.refresh();
+            myGraph.refresh();
             console.timeEnd('refresh');
             console.timeStamp('refresh');
           }
