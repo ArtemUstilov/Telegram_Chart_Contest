@@ -87,7 +87,7 @@
         const maxX = totalMinX + max * diff;
         const minXIndex = graph.findClosestValueIndex(data.x, minX);
         const maxXIndex = graph.findClosestValueIndex(data.x, maxX);
-        const minY = Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
+        const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
         const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
         let scale = { minX, maxX, minY, maxY };
         prevMinXInd = minXIndex;

@@ -3,7 +3,7 @@
 #btn-box{
     width: 100%;
     position: relative;
-    top: 70px;
+    top: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fill, 5px);
     grid-gap: 1px;
