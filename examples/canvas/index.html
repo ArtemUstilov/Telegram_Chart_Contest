@@ -47,34 +47,7 @@
     let preview = document.getElementById('preview-wrap');
     const canvasGraph = graph.createCanvasGraph(element, 300, 500, 'canvas');
     const previewGraph = graph.createCanvasGraph(preview, 300, 50, 'preview');
-    const findClosestValueIndex = (arr, value) => {
-      let min = 0;
-      let max = arr.length - 1;
-      if (arr[min] > value) {
-        return min;
-      }
-      if (arr[max] < value) {
-        return max;
-      }
-      while (true) {
-        if (max - min === 1) {
-          if (arr[min] === value) {
-            return min;
-          } else {
-            return max;
-          }
-        }
-        const mid = Math.round((min + max) / 2);
-        if (arr[mid] === value) {
-          return mid;
-        }
-        if (arr[mid] < value) {
-          min = mid;
-        } else {
-          max = mid;
-        }
-      }
-    };
+
     const findMaximum = (arr, minIndex, maxIndex) => {
       let max = -Infinity;
       for (let i = minIndex; i <= maxIndex; i++) {
@@ -93,7 +66,7 @@
       }
       return min;
     };
-    const createGraphUpdater = (graph, data, totalMinX, totalMaxX) => {
+    const createGraphUpdater = (myGraph, data, totalMinX, totalMaxX) => {
       const diff = totalMaxX - totalMinX;
       let prevScale, prevData, prevMinXInd, prevMaxXInd;
       const updater = (min, max) => {
@@ -103,14 +76,14 @@
         }
         const minX = totalMinX + min * diff;
         const maxX = totalMinX + max * diff;
-        const minXIndex = findClosestValueIndex(data.x, minX);
-        const maxXIndex = findClosestValueIndex(data.x, maxX);
+        const minXIndex = graph.findClosestValueIndex(data.x, minX);
+        const maxXIndex = graph.findClosestValueIndex(data.x, maxX);
         const minY = Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
         const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
         let scale = { minX, maxX, minY, maxY };
         prevMinXInd = minXIndex;
         prevMaxXInd = maxXIndex;
-        graph.setScale(scale);
+        myGraph.setScale(scale);
         console.timeEnd('updater');
         console.timeStamp('updater');
       };
@@ -119,17 +92,17 @@
         const minY = Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
         const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
         let scale = { ...prevScale, minY, maxY };
-        graph.setScale(scale);
-        graph.setData(data);
+        myGraph.setScale(scale);
+        myGraph.setData(data);
         console.timeEnd('updateLines');
         console.timeStamp('updateLines');
       };
       const draw = () => {
-        const scale = graph.getScale();
-        const data = graph.getData();
+        const scale = myGraph.getScale();
+        const data = myGraph.getData();
         if (prevScale !== scale || data !== prevData) {
           console.time('refresh');
-          graph.refresh();
+          myGraph.refresh();
           console.timeEnd('refresh');
           console.timeStamp('refresh');
         }

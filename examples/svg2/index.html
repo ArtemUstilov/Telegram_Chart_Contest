@@ -50,34 +50,6 @@
       let preview = document.getElementById('preview');
       const svgGraph = graph.createSVGGraph(element, graph.dateFormatter(5), graph.numberFormatter(10));
       const previewGraph = graph.createSVGGraph(preview);
-      const findClosestValueIndex = (arr, value) => {
-        let min = 0;
-        let max = arr.length - 1;
-        if (arr[min] > value) {
-          return min;
-        }
-        if (arr[max] < value) {
-          return max;
-        }
-        while (true) {
-          if (max - min === 1) {
-            if (arr[min] === value) {
-              return min;
-            } else {
-              return max;
-            }
-          }
-          const mid = Math.round((min + max) / 2);
-          if (arr[mid] === value) {
-            return mid;
-          }
-          if (arr[mid] < value) {
-            min = mid;
-          } else {
-            max = mid;
-          }
-        }
-      };
       const findMaximum = (arr, minIndex, maxIndex) => {
         let max = -Infinity;
         for (let i = minIndex; i <= maxIndex; i++) {
@@ -106,8 +78,8 @@
           }
           const minX = totalMinX + min * diff;
           const maxX = totalMinX + max * diff;
-          const minXIndex = findClosestValueIndex(data.x, minX);
-          const maxXIndex = findClosestValueIndex(data.x, maxX);
+          const minXIndex = graph.findClosestValueIndex(data.x, minX);
+          const maxXIndex = graph.findClosestValueIndex(data.x, maxX);
           const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
           const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
           prevMinXInd = minXIndex;
