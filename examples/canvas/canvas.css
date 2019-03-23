@@ -1,0 +1,127 @@
+#canvas{
+    border: 2px solid #aed0e7;
+}
+.marker{
+    width:calc(100% - 16px);
+    height:50px;
+    position: absolute;
+    top: 1px;
+    border: 2px solid #aed0e7;
+    border-right-width: 8px;
+    border-left-width: 8px;
+    background-color: transparent;
+    opacity: 0.5;
+    z-index: 4;
+}
+#bg-preview-active{
+    background-color: #fff;
+    position: absolute;
+    width:300px;
+    height: 50px;
+    top: 2px;
+    z-index: -1;
+}
+#bg-preview{
+    background-color: #f5f9fb;
+    position: absolute;
+    width:300px;
+    height: 50px;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+#preview{
+    z-index: 50;
+}
+.preview-wrap{
+    top: 50px;
+    width: 300px;
+    position: relative;
+}
+.container{
+    position: absolute;
+    left: calc(50% - 150px);
+    top: 0;
+    width: 300px;
+}
+#dragCircle{
+    position: absolute;
+    top: -7px;
+    background-color: #aed0e7;
+    opacity: 0.3;
+    transform: scale(0);
+    border-radius: 50%;
+    z-index: 3;
+    transition: transform 0.3s;
+}
+
+
+#btn-box{
+    width: 100%;
+    position: relative;
+    top: 70px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 5px);
+    grid-gap: 1px;
+}
+.check-btn{
+    border: 1px solid #aed0e7;
+    color: #43484b;
+    background-color: #fff;
+    border-radius:15px;
+    height: 30px;
+    width: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-right: 10px;
+}
+.check-btn p{
+    margin: 0 5px;
+}
+.btn-circle{
+    width: 20px;
+    height: 20px;
+    border: 1px solid;
+    border-radius: 50%;
+    transition: all 0.7s;
+}
+button:focus {
+    outline:0;
+}
+
+.check-btn:before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    position: absolute;
+    margin-top: -1px;
+    margin-left: 8px;
+}
+.animate{
+    width: 50px;
+    height: 50px;
+    margin-left: -25px;
+    border-radius: 50%;
+    border: 15px solid #aed0e7;
+    position: absolute;
+    opacity: 0;
+    z-index: 100;
+}
+.clicked{
+    animation: 0.7s circles forwards;
+}
+@keyframes circles {
+    from{
+        opacity: 0.7;
+       transform: scale(0);
+    }
+    to{
+        opacity: 0;
+        transform: scale(1);
+    }
+}

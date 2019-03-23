@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/dist/bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="canvas.css">
+</head>
+
+<body>
+<div class="container" id="container">
+    <div class="preview-wrap" id="preview-wrap">
+        <div id="bg-preview"></div>
+        <div id="bg-preview-active"></div>
+        <div id="marker" class="marker"></div>
+    </div>
+    <div id="btn-box"></div>
+</div>
+<script>
+  let data;
+  fetch('/data/chart_data.json')
+    .then(res => res.json())
+    .then(res => {
+      data = format(res[0]);
+      run(data);
+    })
+    .catch(err => console.log(err));
+
+  function format(data) {
+    return ({
+      lines: data.columns.filter(col => data.types[col[0]] === 'line').map(line => ({
+        values: line.slice(1),
+        color: data.colors[line[0]],
+        name: data.names[line[0]],
+      })),
+      x: data.columns.find(col => data.types[col[0]] === 'x').slice(1),
+    })
+  }
+
+  function run(data) {
+    let element = document.getElementById('container');
+    let preview = document.getElementById('preview-wrap');
+    const canvasGraph = graph.createCanvasGraph(element, 300, 500, 'canvas');
+    const previewGraph = graph.createCanvasGraph(preview, 300, 50, 'preview');
+    const findClosestValueIndex = (arr, value) => {
+      let min = 0;
+      let max = arr.length - 1;
+      if (arr[min] > value) {
+        return min;
+      }
+      if (arr[max] < value) {
+        return max;
+      }
+      while (true) {
+        if (max - min === 1) {
+          if (arr[min] === value) {
+            return min;
+          } else {
+            return max;
+          }
+        }
+        const mid = Math.round((min + max) / 2);
+        if (arr[mid] === value) {
+          return mid;
+        }
+        if (arr[mid] < value) {
+          min = mid;
+        } else {
+          max = mid;
+        }
+      }
+    };
+    const findMaximum = (arr, minIndex, maxIndex) => {
+      let max = -Infinity;
+      for (let i = minIndex; i <= maxIndex; i++) {
+        if (arr[i] > max) {
+          max = arr[i];
+        }
+      }
+      return max;
+    };
+    const findMinimum = (arr, minIndex, maxIndex) => {
+      let min = Infinity;
+      for (let i = minIndex; i <= maxIndex; i++) {
+        if (arr[i] < min) {
+          min = arr[i];
+        }
+      }
+      return min;
+    };
+    const createGraphUpdater = (graph, data, totalMinX, totalMaxX) => {
+      const diff = totalMaxX - totalMinX;
+      let prevScale, prevData, prevMinXInd, prevMaxXInd;
+      const updater = (min, max) => {
+        console.time('updater');
+        if (isNaN(min) || isNaN(max)) {
+          return;
+        }
+        const minX = totalMinX + min * diff;
+        const maxX = totalMinX + max * diff;
+        const minXIndex = findClosestValueIndex(data.x, minX);
+        const maxXIndex = findClosestValueIndex(data.x, maxX);
+        const minY = Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
+        const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
+        let scale = { minX, maxX, minY, maxY };
+        prevMinXInd = minXIndex;
+        prevMaxXInd = maxXIndex;
+        graph.setScale(scale);
+        console.timeEnd('updater');
+        console.timeStamp('updater');
+      };
+      const updateLines = (data) => {
+        console.time('updateLines');
+        const minY = Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
+        const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
+        let scale = { ...prevScale, minY, maxY };
+        graph.setScale(scale);
+        graph.setData(data);
+        console.timeEnd('updateLines');
+        console.timeStamp('updateLines');
+      };
+      const draw = () => {
+        const scale = graph.getScale();
+        const data = graph.getData();
+        if (prevScale !== scale || data !== prevData) {
+          console.time('refresh');
+          graph.refresh();
+          console.timeEnd('refresh');
+          console.timeStamp('refresh');
+        }
+        prevScale = scale;
+        prevData = data;
+        requestAnimationFrame(draw);
+      };
+      return { draw, updater, updateLines };
+    }
+    const minX = Math.min(...data.x);
+    const maxX = Math.max(...data.x);
+
+    canvasGraph.setData(data);
+    previewGraph.setData(data);
+    const canvasGraphUpdater = createGraphUpdater(canvasGraph, data, minX, maxX);
+    const previewGraphUpdater = createGraphUpdater(previewGraph, data, minX, maxX);
+    canvasGraphUpdater.updater(0, 1);
+    previewGraphUpdater.updater(0, 1);
+
+    graph.dragMaster.makeDraggable(
+      document.getElementById('marker'), // element to make draggable
+      element.getBoundingClientRect().left, // left barrier
+      element.offsetWidth, // width of place to drag within
+      10, // min width between markers
+      8, // width of left and right details
+      document.getElementById('bg-preview-active'), // active bg element
+      70, // drag circle size
+      canvasGraphUpdater.updater // callback
+    );
+
+    graph.btnMaster.drawButtons(
+      data, // data set
+      document.getElementById('btn-box'), // parent div
+      canvasGraphUpdater.updateLines, // callbacks
+      previewGraphUpdater.updateLines);
+
+    canvasGraphUpdater.draw();
+    previewGraphUpdater.draw();
+
+
+  }
+</script>
+</body>
+
+</html>
