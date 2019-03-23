@@ -29,3 +29,7 @@ const generateRandomGraph = (min, max, lineCount, pointCount, funcCount = 10) =>
         x,
     };
 };
+
+if (typeof module !== 'undefined') {
+    module.exports = { generateRandomGraph };
+}
