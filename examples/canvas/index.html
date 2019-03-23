@@ -98,7 +98,7 @@
       };
       const updateLines = (data) => {
         console.time('updateLines');
-        const minY = Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
+        const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
         const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
         let scale = { ...prevScale, minY, maxY };
         myGraph.setScale(scale);
