@@ -6,6 +6,7 @@ import copy from 'rollup-plugin-copy-glob';
 import { terser } from 'rollup-plugin-terser';
 
 const watch = !!process.env.ROLLUP_WATCH;
+const port = parseInt(process.env.PORT, 10) || 8088;
 
 export default {
 	input: 'src/main.js',
@@ -21,6 +22,10 @@ export default {
 			{ files: 'examples/**', dest: 'dist' },
 		], { verbose: true, watch: true }),
 		!watch && terser(), // minify, but only in production,
-		watch && serve('dist'),
+		watch && serve({
+			open: true,
+			contentBase: 'dist',
+			port,
+		}),
 	]
 };
