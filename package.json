@@ -6,7 +6,6 @@
   "scripts": {
     "build": "rimraf ./dist && rollup lib/index.js --config rollup.config.js --format iife --name graph --file dist/bundle.js",
     "serve": "rimraf ./dist && rollup lib/index.js --config rollup.config.js --format iife --name graph --file dist/bundle.js --watch",
-    "examples": "npm run build && cpx \"./dist/*\" ./examples/dist && http-server ./examples",
     "lint": "eslint ."
   },
   "keywords": [],
