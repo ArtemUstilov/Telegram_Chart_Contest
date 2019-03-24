@@ -34,7 +34,7 @@
       const chartIndex = 0;
       document.getElementById('title').innerText = `Chart ${chartIndex+1}`;
       graph.initGraph({
-        mode: 'svg',
+        mode: 'canvas',
         data: res[chartIndex],
         containerEl: document.getElementById('chart-wrap'),
         previewEl: document.getElementById('preview-wrap'),
