@@ -44,6 +44,28 @@
       })
     })
     .catch(err => console.log(err));
+  fetch('/data/chart_data2.json')
+    .then(res => res.json())
+    .then(res => {
+      const chartIndex = 0;
+      res.forEach((chart, i)=>{
+        let elem = document.createElement('h2');
+        elem.innerText = `Chart ${i + 1}`;
+        container1.appendChild(elem);
+        graph.initGraph({
+            mode: 'svg',
+            data: chart,
+            btnSwitchEl: document.getElementById('mode-switch'),
+            id: 'svg1',
+            previewId: 'preview1',
+            width: container1.clientWidth,
+            height: container1.clientWidth,
+            previewHeight: 50,
+          },
+          container1);
+      })
+    })
+    .catch(err => console.log(err));
 </script>
 </body>
 
