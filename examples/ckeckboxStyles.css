@@ -6,6 +6,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, 5px);
     grid-gap: 1px;
+    margin-bottom: 50px;
 }
 .check-btn{
     border: 1px solid #e6ecf0;

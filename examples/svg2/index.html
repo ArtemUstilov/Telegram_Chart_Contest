@@ -16,10 +16,7 @@
 
 <body>
 <div class="container" id="container1">
-    <h2 id="title"></h2>
-
 </div>
-<div class="container" id="container2"></div>
 <button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
 <script>
   let data;
@@ -29,30 +26,22 @@
     .then(res => res.json())
     .then(res => {
       const chartIndex = 0;
-      document.getElementById('title').innerText = `Chart ${chartIndex + 1}`;
-      graph.initGraph({
-        mode: 'svg',
-        data: res[chartIndex],
-        btnSwitchEl: document.getElementById('mode-switch'),
-        id: 'svg1',
-        previewId: 'preview1',
-        width: container1.clientWidth,
-        height: container1.clientWidth,
-        previewHeight: 50,
-      },
-      container1);
-
-      graph.initGraph({
-          mode: 'svg',
-          data: res[chartIndex+1],
-          btnSwitchEl: document.getElementById('mode-switch'),
-          id: 'svg2',
-          previewId: 'preview2',
-          width: container2.clientWidth,
-          height: container2.clientWidth,
-          previewHeight: 50,
-        },
-        container2);
+      res.forEach((chart, i)=>{
+        let elem = document.createElement('h2');
+        elem.innerText = `Chart ${i + 1}`;
+        container1.appendChild(elem);
+        graph.initGraph({
+            mode: 'svg',
+            data: chart,
+            btnSwitchEl: document.getElementById('mode-switch'),
+            id: 'svg1',
+            previewId: 'preview1',
+            width: container1.clientWidth,
+            height: container1.clientWidth,
+            previewHeight: 50,
+          },
+          container1);
+      })
     })
     .catch(err => console.log(err));
 </script>

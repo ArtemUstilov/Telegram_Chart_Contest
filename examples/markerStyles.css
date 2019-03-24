@@ -33,6 +33,7 @@
 .preview-wrap{
     width: 100%;
     position: relative;
+    height: 50px;
 }
 #dragCircle{
     position: absolute;
