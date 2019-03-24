@@ -39,8 +39,14 @@
     top: -7px;
     background-color: #aed0e7;
     opacity: 0.3;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
     transform: scale(0);
     border-radius: 50%;
     z-index: 3;
+    -webkit-transition: -webkit-transform 0.3s;
+    transition: -webkit-transform 0.3s;
+    -o-transition: transform 0.3s;
     transition: transform 0.3s;
+    transition: transform 0.3s, -webkit-transform 0.3s;
 }

@@ -2,49 +2,55 @@
 <html>
 
 <head>
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Page Title</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="/bundle.js"></script>
-  <link rel="stylesheet" type="text/css" href="canvas.css">
-  <link rel="stylesheet" type="text/css" href="../ckeckboxStyles.css">
-  <link rel="stylesheet" type="text/css" href="../markerStyles.css">
-  <link rel="stylesheet" type="text/css" href="../switch.css">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="../global.css">
+    <link rel="stylesheet" type="text/css" href="../ckeckboxStyles.css">
+    <link rel="stylesheet" type="text/css" href="../markerStyles.css">
+    <link rel="stylesheet" type="text/css" href="../switch.css">
+
 </head>
 
 <body>
-    <div class="container" id="container">
-      <div class="preview-wrap" id="preview-wrap">
-        <div id="marker" class="marker"></div>
-      </div>
-      <div id="btn-box"></div>
+<div class="container" id="container">
+    <h2 id="title"></h2>
+    <div id="chart-wrap">
     </div>
-    <button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
-    <script>
-    let data;
-    fetch('/data/chart_data.json')
-      .then(res => res.json())
-      .then(res => {
-        graph.initGraph({
-          mode: 'canvas',
-          data: res[0],
-          containerEl: document.getElementById('container'),
-          previewEl: document.getElementById('preview-wrap'),
-          markerEl: document.getElementById('marker'),
-          bgPreviewActiveEl: document.getElementById('bg-preview-active'),
-          btnBoxEl: document.getElementById('btn-box'),
-          btnSwitchEl: document.getElementById('mode-switch'),
-          id: 'canvas',
-          previewId: 'preview-chart',
-          width: 300,
-          height: 500,
-          previewHeight: 50,
-        });
-      })
-      .catch(err => console.log(err));
-
-  </script>
+    <div class="preview-wrap" id="preview-wrap">
+        <div id="marker" class="marker"></div>
+    </div>
+    <div id="btn-box"></div>
+</div>
+<button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
+<script>
+  let data;
+  let container = document.getElementById('container');
+  fetch('/data/chart_data.json')
+    .then(res => res.json())
+    .then(res => {
+      const chartIndex = 0;
+      document.getElementById('title').innerText = `Chart ${chartIndex+1}`;
+      graph.initGraph({
+        mode: 'canvas',
+        data: res[chartIndex],
+        containerEl: document.getElementById('chart-wrap'),
+        previewEl: document.getElementById('preview-wrap'),
+        markerEl: document.getElementById('marker'),
+        bgPreviewActiveEl: document.getElementById('bg-preview-active'),
+        btnBoxEl: document.getElementById('btn-box'),
+        btnSwitchEl: document.getElementById('mode-switch'),
+        id: 'canvas',
+        previewId: 'preview',
+        width: container.clientWidth,
+        height: container.clientWidth,
+        previewHeight: 50,
+      });
+    })
+    .catch(err => console.log(err));
+</script>
 </body>
 
 </html>
