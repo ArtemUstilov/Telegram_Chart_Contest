@@ -1,7 +1,7 @@
 #btn-box{
     width: 100%;
     position: relative;
-    top: 20px;
+    top: 15px;
     display: -ms-grid;
     display: grid;
     grid-template-columns: repeat(auto-fill, 5px);
@@ -10,8 +10,8 @@
 .check-btn{
     border: 1px solid #e6ecf0;
     background-color: transparent;
-    border-radius:15px;
-    height: 30px;
+    border-radius:22px;
+    height: 44px;
     width: -webkit-min-content;
     width: -moz-min-content;
     width: min-content;
@@ -32,7 +32,7 @@
 }
 .btn-circle{
     position: absolute;
-    border: 10.5px solid;
+    border: 13px solid;
     border-radius: 50%;
     -webkit-transition: all 0.3s;
     -o-transition: all 0.3s;
@@ -43,23 +43,25 @@
 }
 .btn-circle-wrapper{
     background-color: transparent;
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     position: relative;
+    left: 2px;
+    margin-right: 10px;
 }
 .btn-circle-wrapper:before {
     content: '';
     display: block;
-    width: 3px;
-    height: 8px;
+    width: 4px;
+    height: 9px;
     border: solid #fff;
     border-width: 0 2px 2px 0;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
     position: absolute;
-    margin-top: 5px;
-    margin-left: 8px;
+    margin-top: 6px;
+    margin-left: 10px;
     z-index: 10;
 }
 button:focus {

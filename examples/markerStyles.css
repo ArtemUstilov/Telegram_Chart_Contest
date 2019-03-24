@@ -13,7 +13,7 @@
 #bg-preview-active{
     background-color: #fff;
     position: absolute;
-    width:300px;
+    width:100%;
     height: 50px;
     top: 2px;
     z-index: -1;
@@ -21,7 +21,7 @@
 #bg-preview{
     background-color: #f5f9fb;
     position: absolute;
-    width:300px;
+    width:100%;
     height: 54px;
     top: 0;
     left: 0;
@@ -31,15 +31,8 @@
     z-index: 50;
 }
 .preview-wrap{
-    top: 10px;
-    width: 300px;
+    width: 100%;
     position: relative;
-}
-.container{
-    position: absolute;
-    left: calc(50% - 150px);
-    top: 0;
-    width: 300px;
 }
 #dragCircle{
     position: absolute;
