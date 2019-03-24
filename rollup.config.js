@@ -7,6 +7,7 @@ import { terser } from 'rollup-plugin-terser';
 
 const watch = !!process.env.ROLLUP_WATCH;
 const port = parseInt(process.env.PORT, 10) || 8088;
+const isWin = true; // process.platform === 'win32';
 
 export default {
 	input: 'src/main.js',
@@ -22,7 +23,7 @@ export default {
 			{ files: 'examples/**', dest: 'dist' },
 		], { verbose: true, watch: true }),
 		!watch && terser(), // minify, but only in production,
-		watch && serve({
+		watch && !isWin && serve({
 			open: true,
 			contentBase: 'dist',
 			port,

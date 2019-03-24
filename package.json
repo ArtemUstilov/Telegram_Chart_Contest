@@ -6,7 +6,9 @@
   "scripts": {
     "build": "rimraf ./dist && rollup lib/index.js --config rollup.config.js --format iife --name graph --file dist/bundle.js",
     "serve": "rimraf ./dist && rollup lib/index.js --config rollup.config.js --format iife --name graph --file dist/bundle.js --watch",
-    "lint": "eslint ."
+    "serve:windows": "concurrently \"npm run serve\" \"npm run hs\"",
+    "lint": "eslint .",
+    "hs": "http-server ./dist -o"
   },
   "keywords": [],
   "author": "yarphen",
@@ -17,6 +19,7 @@
     "@babel/preset-env": "^7.4.2",
     "@babel/register": "^7.4.0",
     "babel-eslint": "^10.0.1",
+    "concurrently": "^4.1.0",
     "cpx": "^1.5.0",
     "eslint": "^5.15.3",
     "eslint-config-airbnb-base": "^13.1.0",
