@@ -10,18 +10,19 @@
   <link rel="stylesheet" type="text/css" href="svg.css">
   <link rel="stylesheet" type="text/css" href="../ckeckboxStyles.css">
   <link rel="stylesheet" type="text/css" href="../markerStyles.css">
+  <link rel="stylesheet" type="text/css" href="../switch.css">
+
 </head>
 
 <body>
   <div class="container" id="container">
     <div class="preview-wrap" id="preview-wrap">
-      <div id="bg-preview"></div>
-      <div id="bg-preview-active"></div>
+
       <div id="marker" class="marker"></div>
     </div>
     <div id="btn-box"></div>
   </div>
-  <p id="test"></p>
+  <button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
   <script>
     let data;
     fetch('/data/chart_data.json')
@@ -42,8 +43,15 @@
         x: data.columns.find(col => data.types[col[0]] === 'x').slice(1),
       })
     }
+    let state = {
+      lightMode: true,
+      day1: '#fff',
+      night1: '#242f3e',
+      night2: '#1f2a38',
+      day2: '#f5f9fb',
+    };
 
-    function run(data) {
+    function run(data){
       let element = document.getElementById('container');
       let preview = document.getElementById('preview-wrap');
       const svgGraph = graph.createSVGGraph(element, {
@@ -121,7 +129,7 @@
           requestAnimationFrame(draw);
         };
         return { draw, updater, updateLines };
-      }
+      };
       const minX = Math.min(...data.x);
       const maxX = Math.max(...data.x);
 
@@ -132,22 +140,50 @@
       svgGraphUpdater.updater(0, 1);
       previewGraphUpdater.updater(0, 1);
 
-      graph.dragMaster.makeDraggable(
+      let dragMaster = graph.dragMaster;
+      let btnMaster = graph.btnMaster;
+
+      function switchBtn(){
+        let btn = document.getElementById('mode-switch');
+        btn.style.left = `calc(50% - ${btn.offsetWidth/2}px`;
+        btn.addEventListener('click', ()=>{
+          let { lightMode, day1, night1 } = state;
+          if(lightMode) {
+            document.body.style.backgroundColor = night1;
+            document.body.style.color = '#fff';
+            btn.style.color = '#36a8f1';
+            dragMaster.updateMode(true);
+            btnMaster.updateMode(true);
+          }else{
+            document.body.style.backgroundColor = day1;
+            document.body.style.color = '#222222';
+            dragMaster.updateMode(false);
+            btnMaster.updateMode(false);
+            btn.style.color = '#108be3';
+          }
+          state.lightMode = !lightMode
+        })
+      }
+
+
+      dragMaster.makeDraggable(
         document.getElementById('marker'), // element to make draggable
         element.getBoundingClientRect().left, // left barrier
         element.offsetWidth, // width of place to drag within
         10, // min width between markers
         8, // width of left and right details
-        document.getElementById('bg-preview-active'), // active bg element
         70, // drag circle size
+        state,
         svgGraphUpdater.updater // callback
       );
-      graph.btnMaster.drawButtons(
+      btnMaster.drawButtons(
         data, // data set
         document.getElementById('btn-box'), // parent div
+        state, // mode settings
         svgGraphUpdater.updateLines, // callbacks
-        previewGraphUpdater.updateLines);
-
+        previewGraphUpdater.updateLines
+      );
+      switchBtn();
       svgGraphUpdater.draw();
       previewGraphUpdater.draw();
     };

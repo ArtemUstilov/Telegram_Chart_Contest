@@ -1,51 +1,71 @@
-
-
 #btn-box{
     width: 100%;
     position: relative;
     top: 20px;
+    display: -ms-grid;
     display: grid;
     grid-template-columns: repeat(auto-fill, 5px);
     grid-gap: 1px;
 }
 .check-btn{
-    border: 1px solid #aed0e7;
-    color: #43484b;
-    background-color: #fff;
+    border: 1px solid #e6ecf0;
+    background-color: transparent;
     border-radius:15px;
     height: 30px;
+    width: -webkit-min-content;
+    width: -moz-min-content;
     width: min-content;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
     justify-content: start;
     margin-right: 10px;
+    color: inherit;
 }
 .check-btn p{
     margin: 0 5px;
 }
 .btn-circle{
-    width: 20px;
-    height: 20px;
-    border: 1px solid;
+    position: absolute;
+    border: 10.5px solid;
     border-radius: 50%;
-    transition: all 0.7s;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    height: 0;
+    width: 0;
+    background-color: transparent;
 }
-button:focus {
-    outline:0;
+.btn-circle-wrapper{
+    background-color: transparent;
+    width: 22px;
+    height: 22px;
+    position: relative;
 }
-
-.check-btn:before {
+.btn-circle-wrapper:before {
     content: '';
     display: block;
     width: 3px;
     height: 8px;
     border: solid #fff;
     border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
     transform: rotate(45deg);
     position: absolute;
-    margin-top: -1px;
+    margin-top: 5px;
     margin-left: 8px;
+    z-index: 10;
 }
+button:focus {
+    outline:0;
+}
+
 .animate{
     width: 50px;
     height: 50px;
@@ -57,15 +77,30 @@ button:focus {
     z-index: 100;
 }
 .clicked{
+    -webkit-animation: 0.7s circles forwards;
     animation: 0.7s circles forwards;
 }
-@keyframes circles {
+@-webkit-keyframes circles {
     from{
         opacity: 0.7;
+        -webkit-transform: scale(0);
         transform: scale(0);
     }
     to{
         opacity: 0;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+@keyframes circles {
+    from{
+        opacity: 0.7;
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    to{
+        opacity: 0;
+        -webkit-transform: scale(1);
         transform: scale(1);
     }
 }

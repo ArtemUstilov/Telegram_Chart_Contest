@@ -1,0 +1,9 @@
+.mode-switch{
+    background: transparent;
+    font-size: 25px;
+    color: #108be3;
+    position: fixed;
+    bottom: 50px;
+    border: none;
+    outline: none;
+}

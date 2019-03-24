@@ -2,7 +2,7 @@
     width:calc(100% - 16px);
     height:50px;
     position: absolute;
-    top: 1px;
+    top: 0;
     border: 2px solid #aed0e7;
     border-right-width: 8px;
     border-left-width: 8px;
@@ -22,7 +22,7 @@
     background-color: #f5f9fb;
     position: absolute;
     width:300px;
-    height: 50px;
+    height: 54px;
     top: 0;
     left: 0;
     z-index: -2;
