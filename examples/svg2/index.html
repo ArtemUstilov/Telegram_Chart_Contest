@@ -17,7 +17,6 @@
 <body>
   <div class="container" id="container">
     <div class="preview-wrap" id="preview-wrap">
-
       <div id="marker" class="marker"></div>
     </div>
     <div id="btn-box"></div>
@@ -28,165 +27,23 @@
     fetch('/data/chart_data.json')
       .then(res => res.json())
       .then(res => {
-        data = format(res[0]);
-        run(data);
+        graph.initGraph({
+          mode: 'svg',
+          data: res[0],
+          containerEl: document.getElementById('container'),
+          previewEl: document.getElementById('preview-wrap'),
+          markerEl: document.getElementById('marker'),
+          bgPreviewActiveEl: document.getElementById('bg-preview-active'),
+          btnBoxEl: document.getElementById('btn-box'),
+          btnSwitchEl: document.getElementById('mode-switch'),
+          id: 'svg',
+          previewId: 'preview',
+          width: 300,
+          height: 500,
+          previewHeight: 50,
+        });
       })
       .catch(err => console.log(err));
-
-    function format(data) {
-      return ({
-        lines: data.columns.filter(col => data.types[col[0]] === 'line').map(line => ({
-          values: line.slice(1),
-          color: data.colors[line[0]],
-          name: data.names[line[0]],
-        })),
-        x: data.columns.find(col => data.types[col[0]] === 'x').slice(1),
-      })
-    }
-    let state = {
-      lightMode: true,
-      day1: '#fff',
-      night1: '#242f3e',
-      night2: '#1f2a38',
-      day2: '#f5f9fb',
-    };
-
-    function run(data){
-      let element = document.getElementById('container');
-      let preview = document.getElementById('preview-wrap');
-      const svgGraph = graph.createSVGGraph(element, {
-        width: 300,
-        height:  500,
-        id: 'svg',
-        createAxis: true,
-      });
-      const previewGraph = graph.createSVGGraph(preview, {
-        width: 300,
-        height:  50,
-        id: 'preview',
-      });
-      const findMaximum = (arr, minIndex, maxIndex) => {
-        let max = -Infinity;
-        for (let i = minIndex; i <= maxIndex; i++) {
-          if (arr[i] > max) {
-            max = arr[i];
-          }
-        }
-        return max;
-      };
-      const findMinimum = (arr, minIndex, maxIndex) => {
-        let min = Infinity;
-        for (let i = minIndex; i <= maxIndex; i++) {
-          if (arr[i] < min) {
-            min = arr[i];
-          }
-        }
-        return min;
-      };
-      const createGraphUpdater = (myGraph, data, totalMinX, totalMaxX) => {
-        const diff = totalMaxX - totalMinX;
-        let prevScale, prevData, prevMinXInd, prevMaxXInd, scale;
-        const updater = (min, max) => {
-          console.time('updater');
-          if (isNaN(min) || isNaN(max)) {
-            return;
-          }
-          const minX = totalMinX + min * diff;
-          const maxX = totalMinX + max * diff;
-          const minXIndex = graph.findClosestValueIndex(data.x, minX);
-          const maxXIndex = graph.findClosestValueIndex(data.x, maxX);
-          const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
-          const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
-          prevMinXInd = minXIndex;
-          prevMaxXInd = maxXIndex;
-          scale = { minX, maxX, minY, maxY };
-          myGraph.setScale(scale);
-          console.timeEnd('updater');
-          console.timeStamp('updater');
-        };
-        const updateLines = (data) => {
-          console.time('updateLines');
-          console.log(myGraph);
-          const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
-          const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
-          let scale = { ...prevScale, minY, maxY };
-          myGraph.setScale(scale);
-          myGraph.setData(data);
-          console.timeEnd('updateLines');
-          console.timeStamp('updateLines');
-        };
-        const draw = () => {
-          const scale = myGraph.getScale();
-          const data = myGraph.getData();
-          if (prevScale !== scale || data !== prevData) {
-            console.time('refresh');
-            myGraph.refresh();
-            console.timeEnd('refresh');
-            console.timeStamp('refresh');
-          }
-          prevScale = scale;
-          prevData = data;
-          requestAnimationFrame(draw);
-        };
-        return { draw, updater, updateLines };
-      };
-      const minX = Math.min(...data.x);
-      const maxX = Math.max(...data.x);
-
-      svgGraph.setData(data);
-      previewGraph.setData(data);
-      const svgGraphUpdater = createGraphUpdater(svgGraph, data, minX, maxX);
-      const previewGraphUpdater = createGraphUpdater(previewGraph, data, minX, maxX);
-      svgGraphUpdater.updater(0, 1);
-      previewGraphUpdater.updater(0, 1);
-
-      let dragMaster = graph.dragMaster;
-      let btnMaster = graph.btnMaster;
-
-      function switchBtn(){
-        let btn = document.getElementById('mode-switch');
-        btn.style.left = `calc(50% - ${btn.offsetWidth/2}px`;
-        btn.addEventListener('click', ()=>{
-          let { lightMode, day1, night1 } = state;
-          if(lightMode) {
-            document.body.style.backgroundColor = night1;
-            document.body.style.color = '#fff';
-            btn.style.color = '#36a8f1';
-            dragMaster.updateMode(true);
-            btnMaster.updateMode(true);
-          }else{
-            document.body.style.backgroundColor = day1;
-            document.body.style.color = '#222222';
-            dragMaster.updateMode(false);
-            btnMaster.updateMode(false);
-            btn.style.color = '#108be3';
-          }
-          state.lightMode = !lightMode
-        })
-      }
-
-
-      dragMaster.makeDraggable(
-        document.getElementById('marker'), // element to make draggable
-        element.getBoundingClientRect().left, // left barrier
-        element.offsetWidth, // width of place to drag within
-        10, // min width between markers
-        8, // width of left and right details
-        70, // drag circle size
-        state,
-        svgGraphUpdater.updater // callback
-      );
-      btnMaster.drawButtons(
-        data, // data set
-        document.getElementById('btn-box'), // parent div
-        state, // mode settings
-        svgGraphUpdater.updateLines, // callbacks
-        previewGraphUpdater.updateLines
-      );
-      switchBtn();
-      svgGraphUpdater.draw();
-      previewGraphUpdater.draw();
-    };
   </script>
 </body>
 

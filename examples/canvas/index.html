@@ -2,158 +2,49 @@
 <html>
 
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/dist/bundle.js"></script>
-    <link rel="stylesheet" type="text/css" href="canvas.css">
-    <link rel="stylesheet" type="text/css" href="../ckeckboxStyles.css">
-    <link rel="stylesheet" type="text/css" href="../markerStyles.css">
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/dist/bundle.js"></script>
+  <link rel="stylesheet" type="text/css" href="canvas.css">
+  <link rel="stylesheet" type="text/css" href="../ckeckboxStyles.css">
+  <link rel="stylesheet" type="text/css" href="../markerStyles.css">
+  <link rel="stylesheet" type="text/css" href="../switch.css">
 </head>
 
 <body>
-<div class="container" id="container">
-    <div class="preview-wrap" id="preview-wrap">
-        <div id="bg-preview"></div>
-        <div id="bg-preview-active"></div>
+    <div class="container" id="container">
+      <div class="preview-wrap" id="preview-wrap">
         <div id="marker" class="marker"></div>
+      </div>
+      <div id="btn-box"></div>
     </div>
-    <div id="btn-box"></div>
-</div>
-<script>
-  let data;
-  fetch('/data/chart_data.json')
-    .then(res => res.json())
-    .then(res => {
-      data = format(res[0]);
-      run(data);
-    })
-    .catch(err => console.log(err));
+    <button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
+    <script>
+    let data;
+    fetch('/data/chart_data.json')
+      .then(res => res.json())
+      .then(res => {
+        graph.initGraph({
+          mode: 'canvas',
+          data: res[0],
+          containerEl: document.getElementById('container'),
+          previewEl: document.getElementById('preview-wrap'),
+          markerEl: document.getElementById('marker'),
+          bgPreviewActiveEl: document.getElementById('bg-preview-active'),
+          btnBoxEl: document.getElementById('btn-box'),
+          btnSwitchEl: document.getElementById('mode-switch'),
+          id: 'canvas',
+          previewId: 'preview-chart',
+          width: 300,
+          height: 500,
+          previewHeight: 50,
+        });
+      })
+      .catch(err => console.log(err));
 
-  function format(data) {
-    return ({
-      lines: data.columns.filter(col => data.types[col[0]] === 'line').map(line => ({
-        values: line.slice(1),
-        color: data.colors[line[0]],
-        name: data.names[line[0]],
-      })),
-      x: data.columns.find(col => data.types[col[0]] === 'x').slice(1),
-    })
-  }
-
-  function run(data) {
-    let element = document.getElementById('container');
-    let preview = document.getElementById('preview-wrap');
-    const canvasGraph = graph.createCanvasGraph(element, {
-      width: 300,
-      height:  500,
-      id: 'canvas',
-      createAxis: true,
-    });
-    const previewGraph = graph.createCanvasGraph(preview, {
-      width: 300,
-      height:  50,
-      id: 'preview-chart',
-    });
-
-    const findMaximum = (arr, minIndex, maxIndex) => {
-      let max = -Infinity;
-      for (let i = minIndex; i <= maxIndex; i++) {
-        if (arr[i] > max) {
-          max = arr[i];
-        }
-      }
-      return max;
-    };
-    const findMinimum = (arr, minIndex, maxIndex) => {
-      let min = Infinity;
-      for (let i = minIndex; i <= maxIndex; i++) {
-        if (arr[i] < min) {
-          min = arr[i];
-        }
-      }
-      return min;
-    };
-    const createGraphUpdater = (myGraph, data, totalMinX, totalMaxX) => {
-      const diff = totalMaxX - totalMinX;
-      let prevScale, prevData, prevMinXInd, prevMaxXInd;
-      const updater = (min, max) => {
-        console.time('updater');
-        if (isNaN(min) || isNaN(max)) {
-          return;
-        }
-        const minX = totalMinX + min * diff;
-        const maxX = totalMinX + max * diff;
-        const minXIndex = graph.findClosestValueIndex(data.x, minX);
-        const maxXIndex = graph.findClosestValueIndex(data.x, maxX);
-        const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, minXIndex, maxXIndex)));
-        const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, minXIndex, maxXIndex)));
-        let scale = { minX, maxX, minY, maxY };
-        prevMinXInd = minXIndex;
-        prevMaxXInd = maxXIndex;
-        myGraph.setScale(scale);
-        console.timeEnd('updater');
-        console.timeStamp('updater');
-      };
-      const updateLines = (data) => {
-        console.time('updateLines');
-        const minY = 0; // Math.min(...data.lines.map(line => findMinimum(line.values, prevMinXInd, prevMaxXInd)));
-        const maxY = Math.max(...data.lines.map(line => findMaximum(line.values, prevMinXInd, prevMaxXInd)));
-        let scale = { ...prevScale, minY, maxY };
-        myGraph.setScale(scale);
-        myGraph.setData(data);
-        console.timeEnd('updateLines');
-        console.timeStamp('updateLines');
-      };
-      const draw = () => {
-        const scale = myGraph.getScale();
-        const data = myGraph.getData();
-        if (prevScale !== scale || data !== prevData) {
-          console.time('refresh');
-          myGraph.refresh();
-          console.timeEnd('refresh');
-          console.timeStamp('refresh');
-        }
-        prevScale = scale;
-        prevData = data;
-        requestAnimationFrame(draw);
-      };
-      return { draw, updater, updateLines };
-    }
-    const minX = Math.min(...data.x);
-    const maxX = Math.max(...data.x);
-
-    canvasGraph.setData(data);
-    previewGraph.setData(data);
-    const canvasGraphUpdater = createGraphUpdater(canvasGraph, data, minX, maxX);
-    const previewGraphUpdater = createGraphUpdater(previewGraph, data, minX, maxX);
-    canvasGraphUpdater.updater(0, 1);
-    previewGraphUpdater.updater(0, 1);
-
-    graph.dragMaster.makeDraggable(
-      document.getElementById('marker'), // element to make draggable
-      element.getBoundingClientRect().left, // left barrier
-      element.offsetWidth, // width of place to drag within
-      10, // min width between markers
-      8, // width of left and right details
-      document.getElementById('bg-preview-active'), // active bg element
-      70, // drag circle size
-      canvasGraphUpdater.updater // callback
-    );
-
-    graph.btnMaster.drawButtons(
-      data, // data set
-      document.getElementById('btn-box'), // parent div
-      canvasGraphUpdater.updateLines, // callbacks
-      previewGraphUpdater.updateLines);
-
-    canvasGraphUpdater.draw();
-    previewGraphUpdater.draw();
-
-
-  }
-</script>
+  </script>
 </body>
 
 </html>
