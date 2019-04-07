@@ -15,32 +15,25 @@
 </head>
 
 <body>
-<div class="container" id="container1">
+<div class="container" id="container">
 </div>
+<br/><br/><br/>
 <button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
 <script>
-  let data;
-  let container1 = document.getElementById('container1');
-  let container2 = document.getElementById('container2');
+  let container = document.getElementById('container');
   fetch('/data/chart_data.json')
     .then(res => res.json())
     .then(res => {
-      const chartIndex = 0;
       res.forEach((chart, i)=>{
-        let elem = document.createElement('h2');
-        elem.innerText = `Chart ${i + 1}`;
-        container1.appendChild(elem);
         graph.initGraph({
             mode: 'svg',
             data: chart,
             btnSwitchEl: document.getElementById('mode-switch'),
-            id: 'svg1',
-            previewId: 'preview1',
-            width: container1.clientWidth,
-            height: container1.clientWidth,
+            width: container.clientWidth,
+            height: container.clientWidth,
             previewHeight: 50,
           },
-          container1);
+          container);
       })
     })
     .catch(err => console.log(err));
