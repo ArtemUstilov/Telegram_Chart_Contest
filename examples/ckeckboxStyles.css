@@ -9,62 +9,44 @@
     margin-bottom: 50px;
 }
 .check-btn{
-    border: 1px solid #e6ecf0;
+    border: 2px solid #e6ecf0;
     background-color: transparent;
-    border-radius:22px;
-    height: 44px;
+    border-radius: 50px;
+    height: 35px;
     width: -webkit-min-content;
     width: -moz-min-content;
     width: min-content;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    flex-direction: row;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     -webkit-box-pack: start;
     -ms-flex-pack: start;
-    justify-content: start;
+    justify-content: space-around;
     margin-right: 10px;
     color: inherit;
 }
 .check-btn p{
-    margin: 0 5px;
+    margin: 0;
+    font-weight: bold;
+
 }
-.btn-circle{
-    position: absolute;
-    border: 13px solid;
-    border-radius: 50%;
-    -webkit-transition: all 0.3s;
-    -o-transition: all 0.3s;
-    transition: all 0.3s;
-    height: 0;
-    width: 0;
-    background-color: transparent;
-}
+
 .btn-circle-wrapper{
-    background-color: transparent;
-    width: 26px;
-    height: 26px;
-    position: relative;
-    left: 2px;
-    margin-right: 10px;
-}
-.btn-circle-wrapper:before {
-    content: '';
-    display: block;
     width: 4px;
     height: 9px;
     border: solid #fff;
     border-width: 0 2px 2px 0;
+    margin-bottom: 3px;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-    position: absolute;
-    margin-top: 6px;
-    margin-left: 10px;
     z-index: 10;
 }
+
 button:focus {
     outline:0;
 }
