@@ -21,19 +21,50 @@
 <button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
 <script>
   let container = document.getElementById('container');
-  fetch('/data/chart_data.json')
+  fetch('/data/overview.json')
     .then(res => res.json())
     .then(res => {
-      res.forEach((chart, i)=>{
-        graph.initGraph({
-            mode: 'svg',
-            data: chart,
-            btnSwitchEl: document.getElementById('mode-switch'),
-            width: container.clientWidth,
-            height: container.clientWidth,
-          },
-          container);
-      })
+      // res.forEach((chart, i)=>{
+      //   graph.initGraph({
+      //       mode: 'stacked',
+      //       data: chart,
+      //       btnSwitchEl: document.getElementById('mode-switch'),
+      //       width: container.clientWidth,
+      //       height: container.clientWidth,
+      //     },
+      //     container);
+      // })
+      graph.initGraph({
+              mode: 'svg',
+              data: res,
+              btnSwitchEl: document.getElementById('mode-switch'),
+              width: container.clientWidth,
+              height: container.clientWidth,
+            },
+            container);
+    })
+    .catch(err => console.log(err));
+  fetch('/data/overviewType3.json')
+    .then(res => res.json())
+    .then(res => {
+      // res.forEach((chart, i)=>{
+      //   graph.initGraph({
+      //       mode: 'stacked',
+      //       data: chart,
+      //       btnSwitchEl: document.getElementById('mode-switch'),
+      //       width: container.clientWidth,
+      //       height: container.clientWidth,
+      //     },
+      //     container);
+      // })
+      graph.initGraph({
+          mode: 'stacked',
+          data: res,
+          btnSwitchEl: document.getElementById('mode-switch'),
+          width: container.clientWidth,
+          height: container.clientWidth,
+        },
+        container);
     })
     .catch(err => console.log(err));
 </script>
