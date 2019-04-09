@@ -24,16 +24,6 @@
   fetch('/data/overview.json')
     .then(res => res.json())
     .then(res => {
-      // res.forEach((chart, i)=>{
-      //   graph.initGraph({
-      //       mode: 'stacked',
-      //       data: chart,
-      //       btnSwitchEl: document.getElementById('mode-switch'),
-      //       width: container.clientWidth,
-      //       height: container.clientWidth,
-      //     },
-      //     container);
-      // })
       graph.initGraph({
               mode: 'svg',
               data: res,
@@ -44,19 +34,22 @@
             container);
     })
     .catch(err => console.log(err));
+  fetch('/data/overviewType2.json')
+    .then(res => res.json())
+    .then(res => {
+      graph.initGraph({
+          mode: 'svg',
+          data: res,
+          btnSwitchEl: document.getElementById('mode-switch'),
+          width: container.clientWidth,
+          height: container.clientWidth,
+        },
+        container);
+    })
+    .catch(err => console.log(err));
   fetch('/data/overviewType3.json')
     .then(res => res.json())
     .then(res => {
-      // res.forEach((chart, i)=>{
-      //   graph.initGraph({
-      //       mode: 'stacked',
-      //       data: chart,
-      //       btnSwitchEl: document.getElementById('mode-switch'),
-      //       width: container.clientWidth,
-      //       height: container.clientWidth,
-      //     },
-      //     container);
-      // })
       graph.initGraph({
           mode: 'stacked',
           data: res,
@@ -67,19 +60,23 @@
         container);
     })
     .catch(err => console.log(err));
+  fetch('/data/overviewType4.json')
+    .then(res => res.json())
+    .then(res => {
+      graph.initGraph({
+          mode: 'stacked',
+          data: res,
+          disableBtns: true,
+          btnSwitchEl: document.getElementById('mode-switch'),
+          width: container.clientWidth,
+          height: container.clientWidth,
+        },
+        container);
+    })
+    .catch(err => console.log(err));
   fetch('/data/overviewType5.json')
     .then(res => res.json())
     .then(res => {
-      // res.forEach((chart, i)=>{
-      //   graph.initGraph({
-      //       mode: 'stacked',
-      //       data: chart,
-      //       btnSwitchEl: document.getElementById('mode-switch'),
-      //       width: container.clientWidth,
-      //       height: container.clientWidth,
-      //     },
-      //     container);
-      // })
       graph.initGraph({
           mode: 'percentaged',
           data: res,
