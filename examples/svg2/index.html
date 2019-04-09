@@ -67,6 +67,29 @@
         container);
     })
     .catch(err => console.log(err));
+  fetch('/data/overviewType5.json')
+    .then(res => res.json())
+    .then(res => {
+      // res.forEach((chart, i)=>{
+      //   graph.initGraph({
+      //       mode: 'stacked',
+      //       data: chart,
+      //       btnSwitchEl: document.getElementById('mode-switch'),
+      //       width: container.clientWidth,
+      //       height: container.clientWidth,
+      //     },
+      //     container);
+      // })
+      graph.initGraph({
+          mode: 'percentaged',
+          data: res,
+          btnSwitchEl: document.getElementById('mode-switch'),
+          width: container.clientWidth,
+          height: container.clientWidth,
+        },
+        container);
+    })
+    .catch(err => console.log(err));
 </script>
 </body>
 
