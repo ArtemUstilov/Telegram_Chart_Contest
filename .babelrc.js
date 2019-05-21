@@ -1,13 +1,8 @@
-{
+module.exports =  {
   "presets": [
-    [
-      "es2015",
-      {
-        "modules": false
-      }
-    ]
+    ["@babel/preset-env"]
   ],
   "plugins": [
-    "external-helpers"
+    "@babel/external-helpers"
   ]
 }

@@ -2,35 +2,84 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Charts Telegram</title>
+    <title>ArtemUstilov</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-content: center;
-        }
-        .column {
-            display: flex;
-            flex-direction: column;
-        }
-        .column a {
-            margin: 10px;
-            font-size: 20px;
-            color: black;
-        }
-    </style>
+    <script src="bundle.js"></script>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-    <div>
-        <h1>Telegram Charts</h1>
-        <div class="column">
-            <a href="/svg2/index.html">SVG</a>
-        </div>
-    </div>
+<h2 class="main-title">Telegram Contest</h2>
+<div class="container" id="container">
+</div>
+<button class="mode-switch" id="mode-switch">Switch to Night Mode</button>
+<script>
+  const container = document.getElementById('container');
+  const width = container.clientWidth;
+  const height = window.innerHeight - 300 < 300 ? 300 : window.innerHeight - 300;
+  const PATH = './data/contest/';
+  const OPTIONS = {
+    1: { mode: 'svg', title: 'First' },
+    2: { mode: 'svg', additionalAxis: true, title: 'Second' },
+    3: { mode: 'stacked', title: 'Third' },
+    4: { mode: 'stacked', disableBtns: true, title: 'Fourth' },
+    5: { mode: 'percentaged', title: 'Fifth' }
+  };
+  let day = true;
+  const state = {
+    day1: '#fff',
+    night1: '#242f3e',
+  };
+  let btn = document.getElementById('mode-switch');
+  btn.addEventListener('click', () => {
+    day = !day;
+    if (!day) {
+      document.body.style.backgroundColor = state.night1;
+      document.body.style.color = '#fff';
+      btn.style.color = '#36a8f1';
+      btn.style.backgroundColor = '#242f3e';
+      btn.innerText = 'Switch To Day Mode';
+    } else {
+      document.body.style.backgroundColor = state.day1;
+      document.body.style.color = '#222222';
+      btn.style.backgroundColor = '#fff';
+      btn.innerText = 'Switch To Night Mode';
+      btn.style.color = '#108be3';
+    }
+  });
+
+  function loadChart(path, id) {
+    let fetchChart = fetch(path);
+    return fetchChart.then(res => res.json()).then(res => ({ res: res, ind: id }));
+  }
+
+  let charts = Promise.all([1, 2, 3, 4, 5].map(i => (loadChart(`${PATH}${i}/overview.json`, i))));
+  charts
+    .then(charts => {
+      charts.sort((a, b) => a.ind - b.ind);
+      return charts;
+    })
+    .then(charts => {
+      console.log(JSON.parse(charts));
+      charts.forEach(chart => graph.initGraph({
+          data: chart.res,
+          btnSwitchEl: document.getElementById('mode-switch'),
+          width,
+          height,
+          path: `${PATH}${chart.ind}`,
+          mode: OPTIONS[chart.ind].mode,
+          additionalAxis: OPTIONS[chart.ind].additionalAxis,
+          disableBtns: OPTIONS[chart.ind].disableBtns,
+          title: OPTIONS[chart.ind].title,
+        },
+        container))
+    })
+    .catch(error => console.log(error));
+</script>
 </body>
 
 </html>
